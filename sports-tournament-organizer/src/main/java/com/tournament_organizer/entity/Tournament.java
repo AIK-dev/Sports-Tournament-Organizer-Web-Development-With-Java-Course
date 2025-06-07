@@ -24,4 +24,14 @@ public class Tournament {
     @OneToMany
     private ArrayList<Venue> venues;
     private String rules;
+
+    public void copyTournament(Tournament tournament) {
+        this.setName(tournament.name);
+        this.setSport(tournament.sport);
+        this.setParticipationLimit(tournament.participationLimit);
+        this.setStartDate(tournament.startDate);
+        this.setEndDate(tournament.endDate);
+        this.setVenues(tournament.venues);
+        this.setRules(tournament.rules);
+    }
 }

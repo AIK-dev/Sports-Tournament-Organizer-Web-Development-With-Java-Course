@@ -30,4 +30,14 @@ public class Match {
         DRAW,
         NOT_PLAYED
     }
+    private Result result;
+
+    public void copyMatch(Match match) {
+        this.setTournamentId(match.tournamentId);
+        this.setParticipant1Id(match.participant1Id);
+        this.setParticipant2Id(match.participant2Id);
+        this.setVenueId(match.venueId);
+        this.setScheduledStart(match.scheduledStart);
+        this.setResult(match.result);
+    }
 }
