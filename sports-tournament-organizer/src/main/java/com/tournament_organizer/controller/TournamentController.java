@@ -50,7 +50,6 @@ public class TournamentController {
         }
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity < Tournament > updateTournament(@PathVariable(value = "id") Long tournamentId,
                                                   @Valid @RequestBody Tournament tournamentDetails) throws ResourceNotFoundException {
