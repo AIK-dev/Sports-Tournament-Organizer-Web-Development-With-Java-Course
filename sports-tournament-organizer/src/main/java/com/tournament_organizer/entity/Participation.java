@@ -2,11 +2,14 @@ package com.tournament_organizer.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 
+@Setter
 @Entity
+@Table(name = "participation")
 public class Participation implements Serializable {
     @Id
     private long participantId;
@@ -16,10 +19,10 @@ public class Participation implements Serializable {
     private Player player;
 
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tournament_participation",
-            joinColumns = @JoinColumn(name = "participation_id"),
+            joinColumns = @JoinColumn(name = "participant_id"),
             inverseJoinColumns = @JoinColumn(name = "tournament_id")
     )
     private Tournament tournament;
@@ -28,10 +31,6 @@ public class Participation implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getParticipantId() {
         return participantId;
-    }
-
-    public void setParticipantId(long participantId) {
-        this.participantId = participantId;
     }
 
     @Column(name = "team", length = 1024)
@@ -48,21 +47,4 @@ public class Participation implements Serializable {
     public Tournament getTournament() {
         return tournament;
     }
-
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-
-
-
 }

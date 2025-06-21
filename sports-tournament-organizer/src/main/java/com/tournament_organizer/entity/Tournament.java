@@ -16,10 +16,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "tournaments")
 public class Tournament implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
     private String sport;
     private int participationLimit;
@@ -27,7 +28,7 @@ public class Tournament implements Serializable {
     private Date endDate;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Participation> participations = new ArrayList<Participation>();
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -38,8 +39,6 @@ public class Tournament implements Serializable {
     private String rules;
 
     public void copyTournament(Tournament tournament) {
-        System.out.println("This is the input that we are getting for venues: " + tournament.getVenues().toString());
-        System.out.println("This is the input that we are getting for venues: " + tournament.getVenues().toString());
         this.setName(tournament.name);
         this.setSport(tournament.sport);
         this.setParticipationLimit(tournament.participationLimit);
@@ -54,6 +53,11 @@ public class Tournament implements Serializable {
         participation.setTournament(this);
     }
 
+    public void removeParticipation(Participation participation) {
+        this.participations.remove(participation);
+        participation.setTournament(null);
+    }
+
     @Column(name = "venues", nullable = false, length = 1024)
     public List<Venue> getVenues() {
         return venues;
@@ -61,4 +65,6 @@ public class Tournament implements Serializable {
     public void setVenues(List<Venue> venues) {
         this.venues = this.venues;
     }
+
+
 }

@@ -7,6 +7,7 @@ import com.tournament_organizer.service.ParticipationService;
 import com.tournament_organizer.web.HeaderUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,4 +58,17 @@ public class ParticipationController {
                 .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, resultParticipation.getParticipantId().toString()))
                 .body(resultParticipation);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteParticipation(@PathVariable(value = "id") Long participationId) throws ResourceNotFoundException {
+        Participation participation = participationService.findById(participationId);
+        if (participation != null) {
+
+            participationService.deleteParticipation(participation);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, participationId.toString())).build();
+        } else {
+            throw new ResourceNotFoundException("Participation not found for the following id:" + participationId.toString());
+        }
+    }
+
 }

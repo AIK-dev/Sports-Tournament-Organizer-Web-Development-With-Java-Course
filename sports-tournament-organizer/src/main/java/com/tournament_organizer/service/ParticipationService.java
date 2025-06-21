@@ -66,7 +66,7 @@ public class ParticipationService {
             }
 
         } else {
-            throw new IllegalArgumentException("Participation without a Tournament is not allowed");
+            throw new IllegalArgumentException("Participation without an associated Tournament is not allowed");
         }
 
         if (playerId != null) {
@@ -118,7 +118,23 @@ public class ParticipationService {
         return participationRepository.findById(participationId).orElse(null);
     }
 
-    public void deleteParticipation(Participation participation) {
+    public void deleteParticipation(Participation participation) throws ResourceNotFoundException {
+        Long tournamentId = participation.getTournament().getId();
+        Tournament tournament;
+        if (tournamentId != null) {
+            Optional<Tournament> optionalTournament = tournamentRepository.findById(tournamentId);
+            if (optionalTournament.isEmpty()) {
+                throw new ResourceNotFoundException("A Tournament with Id: " + tournamentId + "has not been found to be associated with this participation!");
+            } else {
+                tournament = optionalTournament.get();
+            }
+        } else {
+            throw new IllegalArgumentException("Participation without a Tournament is not allowed");
+        }
+
+        tournament.removeParticipation(participation);
+        tournamentRepository.save(tournament);
+
         participationRepository.delete(participation);
     }
 
