@@ -5,19 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.tournament_organizer.dto.match.MatchInDTO;
+import com.tournament_organizer.dto.match.MatchOutDTO;
 import com.tournament_organizer.service.MatchService;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import com.tournament_organizer.exception.ResourceNotFoundException;
@@ -27,58 +23,39 @@ import com.tournament_organizer.entity.Match;
 @RequestMapping("/api/v1/matchs")
 public class MatchController {
 
+    private final MatchService matchService;
+
     @Autowired
-    private MatchService matchService;
+    public MatchController(MatchService matchService) {
+        this.matchService = matchService;
+    }
 
     @PostMapping
-    public Match createMatch(@Valid @RequestBody Match match) {
-        return matchService.save(match);
+    public ResponseEntity<MatchOutDTO> createMatch(@Valid @RequestBody MatchInDTO match) {
+        MatchOutDTO created = matchService.save(match);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
-    public List<Match> getAllMatchs() {
+    public List<MatchOutDTO> getAllMatchs() {
         return matchService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity < Match > getMatchById(@PathVariable(value = "id") Long matchId) throws ResourceNotFoundException {
-        Match match = matchService.findById(matchId);
-        if (match != null) {
-            return ResponseEntity.ok().body(match);
-        } else {
-            throw new ResourceNotFoundException("Match not found for the following id:" + matchId);
-        }
+    public ResponseEntity <MatchOutDTO> getMatchById(@PathVariable Long id)  {
+        return ResponseEntity.status(HttpStatus.FOUND).body(matchService.findById(id));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity < Match > updateMatch(@PathVariable(value = "id") Long matchId,
-                                                          @Valid @RequestBody Match matchDetails) throws ResourceNotFoundException {
-        Match match = matchService.findById(matchId);
-        if (match != null) {
-            match.copyMatch(matchDetails);
-
-            final Match updatedMatch = matchService.save(match);
-            return ResponseEntity.ok(updatedMatch);
-        } else {
-            throw new ResourceNotFoundException("Match not found for the following id:" + matchId);
-        }
+    public ResponseEntity <MatchOutDTO> updateMatch(@PathVariable Long id,
+                                                          @Valid @RequestBody MatchInDTO matchDetails) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(matchService.update(id, matchDetails));
     }
 
     @DeleteMapping("/{id}")
-    public Map < String, Boolean > deleteMatch(@PathVariable(value = "id") Long matchId)
-            throws ResourceNotFoundException {
-
-        Match match = matchService.findById(matchId);
-
-        if (match != null) {
-            matchService.delete(match);
-            Map < String, Boolean > response = new HashMap<>();
-            response.put("deleted", Boolean.TRUE);
-            return response;
-        } else {
-            throw new ResourceNotFoundException("Match not found for the following id:" + matchId);
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        matchService.deleteById(id);
     }
-
 }

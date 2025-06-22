@@ -2,14 +2,12 @@ package com.tournament_organizer.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import com.tournament_organizer.dto.participation.ParticipationCreationDTO;
-import com.tournament_organizer.entity.Participation;
+import com.tournament_organizer.dto.tournament.TournamentInDTO;
+import com.tournament_organizer.dto.tournament.TournamentOutDTO;
+import com.tournament_organizer.mappers.TournamentMapper;
 import com.tournament_organizer.service.TournamentService;
 import com.tournament_organizer.web.HeaderUtil;
 import jakarta.validation.Valid;
@@ -27,65 +25,42 @@ import com.tournament_organizer.entity.Tournament;
 @RequestMapping("/api/v1/tournaments")
 public class TournamentController {
 
-    public final String BASE_API_PATH = "/api/v1/tournaments";
-    public final String ENTITY_NAME = "Tournament";
+/*    public final String BASE_API_PATH = "/api/v1/tournaments";
+    public final String ENTITY_NAME = "Tournament";*/
 
+    private final TournamentService tournamentService;
     @Autowired
-    private TournamentService tournamentService;
+    public TournamentController(TournamentService tournamentService) {
+        this.tournamentService = tournamentService;
+    }
 
     @GetMapping
-    public List<Tournament> getAllTournaments() {
+    public List<TournamentOutDTO> getAllTournaments() {
         return tournamentService.findAll();
+    }
+    //TODO If we use axios in the front end because Found is with status 302 it won't see it axios accept only 200+ statuses
+    @GetMapping("/{id}")
+    public ResponseEntity <TournamentOutDTO> getTournamentById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(tournamentService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Tournament> createTournament(@Valid @RequestBody Tournament tournament) throws URISyntaxException {
-        Tournament createdTournament = tournamentService.save(tournament);
-
-        return ResponseEntity.created(new URI(BASE_API_PATH + createdTournament.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, createdTournament.getId().toString()))
-                .body(createdTournament);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity < Tournament > getTournamentById(@PathVariable(value = "id") Long tournamentId) throws ResourceNotFoundException {
-        Tournament tournament = tournamentService.findById(tournamentId);
-        if (tournament != null) {
-            return ResponseEntity.ok().body(tournament);
-        } else {
-            throw new ResourceNotFoundException("Tournament not found for the following id:" + tournamentId);
-        }
+    public ResponseEntity<TournamentOutDTO> createTournament(@Valid @RequestBody TournamentInDTO dto) /*throws URISyntaxException*/ {
+        TournamentOutDTO out = tournamentService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                /*.created(new URI("/api/v1/tournaments/" + out.getId()))*/
+                .body(out);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity < Tournament > updateTournament(@PathVariable(value = "id") Long tournamentId,
-                                                  @Valid @RequestBody Tournament tournamentDetails) throws ResourceNotFoundException {
-        Tournament tournament = tournamentService.findById(tournamentId);
-        if (tournament != null) {
-            tournament.copyTournament(tournamentDetails);
-
-            final Tournament updatedTournament = tournamentService.save(tournament);
-            return ResponseEntity.ok()
-                    .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, updatedTournament.getId().toString()))
-                    .body(updatedTournament);
-
-        } else {
-            throw new ResourceNotFoundException("Tournament not found for the following id:" + tournamentId);
-        }
+    public ResponseEntity <TournamentOutDTO> updateTournament(@PathVariable Long id,
+                                                  @Valid @RequestBody TournamentInDTO dto)  {
+        return ResponseEntity.status(HttpStatus.CREATED).body(tournamentService.update(id, dto));
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTournament(@PathVariable(value = "id") Long tournamentId)
-            throws ResourceNotFoundException {
-
-        Tournament tournament = tournamentService.findById(tournamentId);
-        if (tournament != null) {
-            tournamentService.delete(tournament);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, tournamentId.toString())).build();
-
-        } else {
-            throw new ResourceNotFoundException("Tournament not found for the following id:" + tournamentId);
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        tournamentService.deleteById(id);
     }
 
 }

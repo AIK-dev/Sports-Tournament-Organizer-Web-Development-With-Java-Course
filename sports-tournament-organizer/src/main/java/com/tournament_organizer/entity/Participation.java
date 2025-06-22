@@ -2,49 +2,42 @@ package com.tournament_organizer.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Check;
 
 import java.io.Serializable;
 
 
-@Setter
 @Entity
-@Table(name = "participation")
-public class Participation implements Serializable {
+@Table(name = "participation",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_player_tournament",
+                        columnNames = {"player_id", "tournament_id"}),
+                @UniqueConstraint(name = "uq_team_tournament",
+                        columnNames = {"team_id", "tournament_id"})
+        })
+@Check(constraints = "(player_id IS NOT NULL) <> (team_id IS NOT NULL)")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Participation {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long participantId;
+
     @ManyToOne
+    @JoinColumn(name = "team_id")
     private Team team;
+
     @ManyToOne
+    @JoinColumn(name = "player_id")
     private Player player;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "tournament_participation",
-            joinColumns = @JoinColumn(name = "participant_id"),
-            inverseJoinColumns = @JoinColumn(name = "tournament_id")
-    )
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tournament_id")
     private Tournament tournament;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getParticipantId() {
-        return participantId;
-    }
-
-    @Column(name = "team", length = 1024)
-    public Team getTeam() {
-        return team;
-    }
-
-    @Column(name = "player", length = 1024)
-    public Player getPlayer() {
-        return player;
-    }
-
-    @Column(name = "tournament", length = 4096)
-    public Tournament getTournament() {
-        return tournament;
-    }
 }

@@ -4,41 +4,50 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tournament_organizer.enums.DrawType;
+import com.tournament_organizer.enums.Sport;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "tournaments")
-public class Tournament implements Serializable {
+public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String sport;
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
     private int participationLimit;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
-    @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Participation> participations = new ArrayList<Participation>();
+    /*@JsonManagedReference*/
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participations  = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DrawType drawType;
+
+    @ManyToMany
     @JoinTable(name = "tournament_venue",
             joinColumns = @JoinColumn(name = "tournament_id"),
             inverseJoinColumns = @JoinColumn(name = "venue_id"))
-    private List<Venue> venues = new ArrayList<Venue>();
+    private List<Venue> venues = new ArrayList<>();
     private String rules;
 
-    public void copyTournament(Tournament tournament) {
+    /*public void copyTournament(Tournament tournament) {
         this.setName(tournament.name);
         this.setSport(tournament.sport);
         this.setParticipationLimit(tournament.participationLimit);
@@ -56,15 +65,5 @@ public class Tournament implements Serializable {
     public void removeParticipation(Participation participation) {
         this.participations.remove(participation);
         participation.setTournament(null);
-    }
-
-    @Column(name = "venues", nullable = false, length = 1024)
-    public List<Venue> getVenues() {
-        return venues;
-    }
-    public void setVenues(List<Venue> venues) {
-        this.venues = this.venues;
-    }
-
-
+    }*/
 }

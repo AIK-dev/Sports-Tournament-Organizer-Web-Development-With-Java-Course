@@ -10,13 +10,14 @@ import java.util.List;
 
 @Service
 public class TeamService {
+    private final TeamRepository teamRepository;
     @Autowired
-    private TeamRepository teamRepository;
-
+    public TeamService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
+    }
     public Team save(Team team) {
         return teamRepository.save(team);
     }
-
     public List<Team> findAll() {
         return teamRepository.findAll();
     }
@@ -24,12 +25,10 @@ public class TeamService {
     public Team findById(Long id) {
         return teamRepository.findById(id).orElse(null);
     }
-
     public void deleteById(Long id) {
         teamRepository.deleteById(id);
     }
-
-    public Team addPlayer(Long teamId, Player player) {
+    /*public Team addPlayer(Long teamId, Player player) {
         Team team = findById(teamId);
         if (team != null) {
             team.addPlayer(player);
@@ -49,5 +48,5 @@ public class TeamService {
             }
         }
         return null;
-    }
+    }*/
 }

@@ -1,6 +1,7 @@
 package com.tournament_organizer.controller;
 
 import com.tournament_organizer.dto.participation.ParticipationCreationDTO;
+import com.tournament_organizer.dto.participation.ParticipationDisplayDTO;
 import com.tournament_organizer.entity.Participation;
 import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.service.ParticipationService;
@@ -20,55 +21,38 @@ import java.util.List;
 @RequestMapping("/api/v1/participations")
 public class ParticipationController {
 
+    private final ParticipationService participationService;
     @Autowired
-    private ParticipationService participationService;
-
-    public final String BASE_API_PATH = "/api/v1/participations/";
-    public final String ENTITY_NAME = "Participation";
+    public ParticipationController(ParticipationService participationService) {
+        this.participationService = participationService;
+    }
 
     @GetMapping
-    public List<Participation> getAllParticipations() {
+    public List<ParticipationDisplayDTO> getAllParticipations() {
         return participationService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Participation> createParticipation(@Valid @RequestBody ParticipationCreationDTO participation) throws URISyntaxException, ResourceNotFoundException {
-        // Note: This would be good to be replaced by a potential ParticipationDTO
-        Participation createdParticipation= participationService.createParticipation(participation);
-        return ResponseEntity.created(new URI(BASE_API_PATH + createdParticipation.getParticipantId()))
-                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, createdParticipation.getParticipantId().toString()))
-                .body(createdParticipation);
+    public ResponseEntity<ParticipationDisplayDTO > createParticipation(@Valid @RequestBody ParticipationCreationDTO participation) {
+        ParticipationDisplayDTO createdParticipation= participationService.createParticipation(participation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdParticipation);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity< Participation > getParticipationById(@PathVariable Long participationId) throws URISyntaxException, ResourceNotFoundException {
-        Participation participation = participationService.findById(participationId);
-        if (participation != null) {
-            return ResponseEntity.ok().body(participation);
-        } else {
-            throw new ResourceNotFoundException("Participation not found for the following id: " + participationId);
-        }
+    public ResponseEntity<ParticipationDisplayDTO> getParticipationById(@PathVariable Long id)  {
+        ParticipationDisplayDTO found = participationService.findById(id);
+        return ResponseEntity.status(HttpStatus.FOUND).body(found);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity < Participation > updateParticipation(@PathVariable(value = "id") Long participationId,
-                                                                @Valid @RequestBody ParticipationCreationDTO participationDetails) throws ResourceNotFoundException {
-        Participation resultParticipation = participationService.updateParticipation(participationId, participationDetails);
-        return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, resultParticipation.getParticipantId().toString()))
-                .body(resultParticipation);
+    public ResponseEntity <ParticipationDisplayDTO> updateParticipation(@PathVariable Long id,
+                                                                @Valid @RequestBody ParticipationCreationDTO participationDetails)  {
+        ParticipationDisplayDTO resultParticipation = participationService.updateParticipation(id, participationDetails);
+        return ResponseEntity.ok(resultParticipation);
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteParticipation(@PathVariable(value = "id") Long participationId) throws ResourceNotFoundException {
-        Participation participation = participationService.findById(participationId);
-        if (participation != null) {
-
-            participationService.deleteParticipation(participation);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, participationId.toString())).build();
-        } else {
-            throw new ResourceNotFoundException("Participation not found for the following id:" + participationId.toString());
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        participationService.deleteParticipation(id);
     }
-
 }

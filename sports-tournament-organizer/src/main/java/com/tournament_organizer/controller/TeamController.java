@@ -13,8 +13,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/teams")
 public class TeamController {
+    private final TeamService teamService;
     @Autowired
-    private TeamService teamService;
+    public TeamController(TeamService teamService) {
+        this.teamService = teamService;
+    }
 
     @PostMapping
     public Team createTeam(@Valid @RequestBody Team team) {
@@ -37,7 +40,7 @@ public class TeamController {
     }
 
 
-    @PostMapping("/{teamId}/players")
+    /*@PostMapping("/{teamId}/players")
     public Team addPlayer(@PathVariable Long teamId, @Valid @RequestBody Player player) {
         return teamService.addPlayer(teamId, player);
     }
@@ -45,5 +48,5 @@ public class TeamController {
     @DeleteMapping("/{teamId}/players/{playerId}")
     public Team removePlayer(@PathVariable Long teamId, @PathVariable Long playerId) {
         return teamService.removePlayer(teamId, playerId);
-    }
+    }*/
 }

@@ -1,41 +1,42 @@
 package com.tournament_organizer.entity;
 
+import com.tournament_organizer.enums.Result;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Table(name = "match_to_play")
+@Getter
+@Setter
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tournament_id")
     private Tournament tournamentId;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "participant1_id")
     private Participation participant1Id;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "participant2_id")
     private Participation participant2Id;
+
     @ManyToOne
-    private Venue venueId;
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date scheduledStart;
-    private enum Result {
-        WIN_P1,
-        WIN_P2,
-        DRAW,
-        NOT_PLAYED
-    }
+
+    @Enumerated(EnumType.STRING)
     private Result result;
 
-    public void copyMatch(Match match) {
-        this.setTournamentId(match.tournamentId);
-        this.setParticipant1Id(match.participant1Id);
-        this.setParticipant2Id(match.participant2Id);
-        this.setVenueId(match.venueId);
-        this.setScheduledStart(match.scheduledStart);
-        this.setResult(match.result);
-    }
 }
