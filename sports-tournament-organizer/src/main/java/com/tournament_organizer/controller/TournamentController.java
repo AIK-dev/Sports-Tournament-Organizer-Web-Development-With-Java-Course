@@ -1,32 +1,19 @@
 package com.tournament_organizer.controller;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
-
 import com.tournament_organizer.dto.tournament.TournamentInDTO;
 import com.tournament_organizer.dto.tournament.TournamentOutDTO;
-import com.tournament_organizer.mappers.TournamentMapper;
 import com.tournament_organizer.service.TournamentService;
-import com.tournament_organizer.web.HeaderUtil;
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import com.tournament_organizer.exception.ResourceNotFoundException;
-import com.tournament_organizer.entity.Tournament;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tournaments")
 public class TournamentController {
-
-/*    public final String BASE_API_PATH = "/api/v1/tournaments";
-    public final String ENTITY_NAME = "Tournament";*/
 
     private final TournamentService tournamentService;
     @Autowired
@@ -48,7 +35,6 @@ public class TournamentController {
     public ResponseEntity<TournamentOutDTO> createTournament(@Valid @RequestBody TournamentInDTO dto) /*throws URISyntaxException*/ {
         TournamentOutDTO out = tournamentService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                /*.created(new URI("/api/v1/tournaments/" + out.getId()))*/
                 .body(out);
     }
 

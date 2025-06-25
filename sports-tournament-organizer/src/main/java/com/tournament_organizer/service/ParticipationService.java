@@ -1,38 +1,21 @@
 package com.tournament_organizer.service;
 
 
-import com.tournament_organizer.dto.participation.ParticipationCreationDTO;
-import com.tournament_organizer.dto.participation.ParticipationDisplayDTO;
+import com.tournament_organizer.dto.participation.ParticipationInDTO;
+import com.tournament_organizer.dto.participation.ParticipationOutDTO;
 import com.tournament_organizer.entity.Participation;
-import com.tournament_organizer.entity.Player;
-import com.tournament_organizer.entity.Team;
-import com.tournament_organizer.entity.Tournament;
 import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.mappers.ParticipationMapper;
 import com.tournament_organizer.repository.ParticipationRepository;
-import com.tournament_organizer.repository.PlayerRepository;
-import com.tournament_organizer.repository.TeamRepository;
 import com.tournament_organizer.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ParticipationService {
 
-    /*@Autowired
-    TournamentRepository tournamentRepository;
-
-    @Autowired
-    PlayerRepository playerRepository;
-
-    @Autowired
-    TeamRepository teamRepository;
-
-    @Autowired
-    ParticipationRepository participationRepository;*/
     private final ParticipationRepository participationRepo;
     private final ParticipationMapper mapper;
     private final TournamentRepository tournamentRepo;
@@ -43,7 +26,7 @@ public class ParticipationService {
         this.tournamentRepo = tournamentRepo;
     }
 
-    public ParticipationDisplayDTO createParticipation(ParticipationCreationDTO participationDTO) {
+    public ParticipationOutDTO createParticipation(ParticipationInDTO participationDTO) {
         Participation entity = mapper.toEntity(participationDTO);
         boolean duplicate;
         if (entity.getPlayer() != null) {
@@ -61,21 +44,20 @@ public class ParticipationService {
         return mapper.toDto(entity);
     }
 
-    public List<ParticipationDisplayDTO> findAll() {
+    public List<ParticipationOutDTO> findAll() {
         return participationRepo.findAll()
                 .stream()
                 .map(mapper::toDto)
                 .toList();
     }
-    public ParticipationDisplayDTO  findById(Long participationId) {
+    public ParticipationOutDTO findById(Long participationId) {
         Participation participation = participationRepo.findById(participationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Participation " + participationId + " not found"));
         return mapper.toDto(participation);
     }
 
-    public ParticipationDisplayDTO updateParticipation(Long participationId,
-                                                       ParticipationCreationDTO participationCreationDTO)  {
-
+    public ParticipationOutDTO updateParticipation(Long participationId,
+                                                   ParticipationInDTO participationCreationDTO)  {
         Participation participation = participationRepo.findById(participationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Participation " + participationId + " not found"));
 

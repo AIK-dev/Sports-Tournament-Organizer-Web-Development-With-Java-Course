@@ -1,9 +1,11 @@
 package com.tournament_organizer.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 //TODO OPTIONAL Add logic from the enum sport like in this venue you can play this and that sport nothing else this is for

@@ -1,12 +1,10 @@
 package com.tournament_organizer.service;
 
-
 import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.entity.Team;
 import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.repository.PlayerRepository;
 import com.tournament_organizer.repository.TeamRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

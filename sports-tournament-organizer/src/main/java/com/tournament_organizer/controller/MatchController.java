@@ -1,26 +1,18 @@
 package com.tournament_organizer.controller;
 
-import java.util.HashMap;
-
-import java.util.List;
-import java.util.Map;
-
 import com.tournament_organizer.dto.match.MatchInDTO;
 import com.tournament_organizer.dto.match.MatchOutDTO;
 import com.tournament_organizer.service.MatchService;
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import com.tournament_organizer.exception.ResourceNotFoundException;
-import com.tournament_organizer.entity.Match;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/matchs")
+@RequestMapping("/api/v1/matches")
 public class MatchController {
 
     private final MatchService matchService;
@@ -37,7 +29,7 @@ public class MatchController {
     }
 
     @GetMapping
-    public List<MatchOutDTO> getAllMatchs() {
+    public List<MatchOutDTO> getAllMatches() {
         return matchService.findAll();
     }
 
@@ -45,7 +37,6 @@ public class MatchController {
     public ResponseEntity <MatchOutDTO> getMatchById(@PathVariable Long id)  {
         return ResponseEntity.status(HttpStatus.FOUND).body(matchService.findById(id));
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity <MatchOutDTO> updateMatch(@PathVariable Long id,
