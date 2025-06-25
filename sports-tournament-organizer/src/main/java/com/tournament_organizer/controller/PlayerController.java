@@ -1,38 +1,29 @@
 package com.tournament_organizer.controller;
 
-import java.util.HashMap;
-
-import java.util.List;
-import java.util.Map;
-
+import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.service.PlayerService;
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
-import com.tournament_organizer.exception.ResourceNotFoundException;
-import com.tournament_organizer.entity.Player;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/players")
 public class PlayerController {
+    private final PlayerService playerService;
 
     @Autowired
-    private PlayerService playerService;
+    public PlayerController(PlayerService playerService) {
+        this.playerService = playerService;
+    }
 
     @PostMapping
-    public Player createPlayer(@Valid @RequestBody Player Player) {
-        return playerService.save(Player);
+    public ResponseEntity< Player >createPlayer(@Valid @RequestBody Player Player) {
+        Player created = playerService.save(Player);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
@@ -41,46 +32,39 @@ public class PlayerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity < Player > getPlayerById(@PathVariable Long playerId) throws ResourceNotFoundException {
-        Player player = playerService.findById(playerId);
-        if (player != null) {
-            return ResponseEntity.ok().body(player);
-        } else {
-            throw new ResourceNotFoundException("Player not found for the following id:" + playerId);
-        }
+    public Player getPlayerById(@PathVariable Long id)  {
+        return playerService.findById(id);
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity < Player > updatePlayer(@PathVariable(value = "id") Long playerId,
-                                                      @Valid @RequestBody Player playerDetails) throws ResourceNotFoundException {
-        Player player = playerService.findById(playerId);
-        if (player != null) {
-            player.setName(playerDetails.getName());
-            player.setAge(playerDetails.getAge());
-            player.setGender(playerDetails.getGender());
-
-            final Player updatedPlayer = playerService.save(player);
-            return ResponseEntity.ok(updatedPlayer);
-        } else {
-            throw new ResourceNotFoundException("Player not found for the following id:" + playerId);
-        }
+    public ResponseEntity <Player> updatePlayer(@PathVariable(value = "id") Long playerId,
+                                                      @Valid @RequestBody Player playerDetails) {
+        Player player = playerService.update(playerId, playerDetails);
+        return ResponseEntity.ok(player);
     }
 
     @DeleteMapping("/{id}")
-    public Map < String, Boolean > deletePlayer(@PathVariable(value = "id") Long playerId)
-            throws ResourceNotFoundException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePlayer(@PathVariable Long id) {
+        playerService.deleteById(id);
+    }
+    @PostMapping("/{playerId}/team/{teamId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addToTeam(@PathVariable Long playerId,
+                          @PathVariable Long teamId)  {
+        //TODO: Make sure to check whether the adding to team operation went through correctly and supply the appropriate response
+        // with HTTP.SUCCESSFUL if the operation went through or a failure message if the operation didn't succeed.
+        playerService.assignToTeam(playerId, teamId);
+    }
 
-        Player player = playerService.findById(playerId);
-
-        if (player != null) {
-            playerService.deletePlayer(player);
-            Map < String, Boolean > response = new HashMap<>();
-            response.put("deleted", Boolean.TRUE);
-            return response;
-        } else {
-            throw new ResourceNotFoundException("Player not found for the following id:" + playerId);
-        }
+    @DeleteMapping("/{playerId}/team")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeFromTeam(@PathVariable Long playerId)  {
+        playerService.removeFromTeam(playerId);
+    }
+    @GetMapping("/team/{teamId}")
+    public List<Player> roster(@PathVariable Long teamId) {
+        return playerService.roster(teamId);
     }
 
 }
