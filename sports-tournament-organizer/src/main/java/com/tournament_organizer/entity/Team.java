@@ -1,23 +1,32 @@
 package com.tournament_organizer.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "teams")
 public class Team implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "ageGroup", nullable = false)
     private String ageGroup;
+    @Column(name = "type", nullable = false)
     private String type;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Player> players = new ArrayList<Player>();
+    private List<Player> players = new ArrayList<>();
 
     public Team() {
 
@@ -30,36 +39,6 @@ public class Team implements Serializable {
         this.type = type;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Column(name = "name", nullable = false)
-    public String getName() {
-        return name;
-    }
-
-    @Column(name = "ageGroup", nullable = false)
-    public String getAgeGroup() {
-        return ageGroup;
-    }
-
-    @Column(name = "type", nullable = false)
-    public String getType() {
-        return type;
-    }
-
-    @Column(name = "players", nullable = false, length = 1024)
-    public List<Player> getPlayers() {
-        return players;
-    }
-
     public void addPlayer(Player player) {
         players.add(player);
         player.setTeam(this);
@@ -68,8 +47,6 @@ public class Team implements Serializable {
         players.remove(player);
         player.setTeam(null);
     }
-
-
     @Override
     public String toString() {
         return "Team [" +
@@ -80,24 +57,4 @@ public class Team implements Serializable {
                 ", Team Roster = ['" + "TBD" + '\'' + ']' +
                 ']';
     }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAgeGroup(String ageGroup) {
-        this.ageGroup = ageGroup;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-
-
 }
