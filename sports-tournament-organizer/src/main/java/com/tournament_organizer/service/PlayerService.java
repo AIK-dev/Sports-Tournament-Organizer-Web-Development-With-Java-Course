@@ -59,6 +59,10 @@ public class PlayerService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Player %s", playerId)));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team"));
+        if(player.getSport() != team.getSport()){
+            throw new IllegalStateException(String.format("Player with sport %s does not match team sport %s",
+                    player.getSport(), team.getSport()));
+        }
         if (player.getLevel() != team.getAgeGroup()) {
             throw new IllegalStateException(String.format("Player age group %s does not match team age group %s",
                     player.getLevel(), team.getAgeGroup()));

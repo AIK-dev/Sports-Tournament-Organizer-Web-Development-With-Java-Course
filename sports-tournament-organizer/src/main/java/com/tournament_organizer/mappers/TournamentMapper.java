@@ -37,6 +37,8 @@ public class TournamentMapper {
             }
             t.setVenues(venues);
         }
+        t.setLevel(dto.getLevel());
+        t.setCategory(dto.getCategory());
         return t;
     }
     public void updateEntity(Tournament entity, TournamentInDTO dto) {
@@ -56,6 +58,8 @@ public class TournamentMapper {
                 }
             }
             entity.setVenues(venues);
+            entity.setLevel(dto.getLevel());
+            entity.setCategory(dto.getCategory());
         }
     }
 
@@ -84,7 +88,9 @@ public class TournamentMapper {
                 t.getDrawType(),
                 venueDtos,
                 participationDTOs,
-                t.getRules()
+                t.getRules(),
+                t.getLevel(),
+                t.getCategory()
         );
     }
 }

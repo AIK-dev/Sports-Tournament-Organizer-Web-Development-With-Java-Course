@@ -1,7 +1,9 @@
 package com.tournament_organizer.entity;
 
+import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.DrawType;
 import com.tournament_organizer.enums.Sport;
+import com.tournament_organizer.enums.TeamType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +13,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+//TODO add also a level here professional can't play against amateurs and gender too this is for the participation
+// logic that logic will be used in the participation mapper and there we should add also logic for sport like
+// if the proper team sport can play in this tournament and use the logic to check for limits
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -44,6 +48,10 @@ public class Tournament {
             inverseJoinColumns = @JoinColumn(name = "venue_id"))
     private List<Venue> venues = new ArrayList<>();
     private String rules;
+    @Enumerated(EnumType.STRING)
+    private AgeGroup level;
+    @Enumerated(EnumType.STRING)
+    private TeamType category;
 
 
 }

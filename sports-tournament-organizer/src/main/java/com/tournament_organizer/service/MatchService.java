@@ -26,7 +26,6 @@ public class MatchService {
     @Transactional
     public MatchOutDTO save(MatchInDTO dto) {
         Match entity = mapper.toEntity(dto);
-
         boolean duplicate =
                 matchRepository.existsByTournamentIdAndParticipant1IdAndParticipant2Id(entity.getTournamentId(),
                         entity.getParticipant1Id(),
