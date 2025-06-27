@@ -2,6 +2,7 @@ package com.tournament_organizer.service;
 
 import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.entity.Team;
+import com.tournament_organizer.enums.Gender;
 import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.repository.PlayerRepository;
 import com.tournament_organizer.repository.TeamRepository;
@@ -58,8 +59,26 @@ public class PlayerService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Player %s", playerId)));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team"));
-        //TODO add check if the player and the team are the same level and gender but if the
-        // team is of type MIXED it will be allowed
+        if (player.getLevel() != team.getAgeGroup()) {
+            throw new IllegalStateException(String.format("Player age group %s does not match team age group %s",
+                    player.getLevel(), team.getAgeGroup()));
+        }
+        switch (team.getType()) {
+            case MIXED:
+                break;
+            case MALE:
+                if (player.getGender() != Gender.MALE) {
+                    throw new IllegalStateException("Team is male-only");
+                }
+                break;
+            case FEMALE:
+                if (player.getGender() != Gender.FEMALE) {
+                    throw new IllegalStateException("Team is female-only");
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unsupported team type: " + team.getType());
+        }
         player.setTeam(team);
     }
     @Transactional
