@@ -1,27 +1,21 @@
-package com.tournament_organizer.entity;
+package com.tournament_organizer.dto.player;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.Gender;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Entity
-@Table(name = "player")
-public class Player {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Setter
+public class PlayerOutDTO {
     private long id;
-
     private String firstName;
-
     private String secondName;
 
     private Integer age;
@@ -32,8 +26,6 @@ public class Player {
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private Team team;
+    private String associatedTeam;
+
 }

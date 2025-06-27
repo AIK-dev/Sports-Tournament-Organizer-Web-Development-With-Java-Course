@@ -1,53 +1,54 @@
 package com.tournament_organizer.service;
 
-import com.tournament_organizer.entity.Player;
+import com.tournament_organizer.dto.team.TeamInDTO;
+import com.tournament_organizer.dto.team.TeamOutDTO;
 import com.tournament_organizer.entity.Team;
+import com.tournament_organizer.exception.ResourceNotFoundException;
+import com.tournament_organizer.mappers.TeamMapper;
 import com.tournament_organizer.repository.TeamRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class TeamService {
-    @Autowired
-    private TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
+    private final TeamMapper teamMapper;
 
-    public Team save(Team team) {
-        return teamRepository.save(team);
+    public TeamService(TeamRepository teamRepository, TeamMapper teamMapper) {
+        this.teamRepository = teamRepository;
+        this.teamMapper = teamMapper;
     }
 
-    public List<Team> findAll() {
-        return teamRepository.findAll();
+    @Transactional
+    public TeamOutDTO save(TeamInDTO dto) {
+        Team team = teamMapper.toEntity(dto);
+        return teamMapper.toDto(teamRepository.save(team));
     }
 
-    public Team findById(Long id) {
-        return teamRepository.findById(id).orElse(null);
+    @Transactional
+    public TeamOutDTO update(Long id, TeamInDTO patch) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Team " + id + " not found"));
+        teamMapper.updateEntity(team, patch);
+        return teamMapper.toDto(team);
+    }
+
+    public List<TeamOutDTO> findAll() {
+        return teamRepository.findAll().stream()
+                .map(teamMapper::toDto)
+                .toList();
+    }
+
+    public TeamOutDTO findById(Long id) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Team " + id + " not found"));
+        return teamMapper.toDto(team);
     }
 
     public void deleteById(Long id) {
         teamRepository.deleteById(id);
     }
-
-    public Team addPlayer(Long teamId, Player player) {
-        Team team = findById(teamId);
-        if (team != null) {
-            team.addPlayer(player);
-
-            return save(team);
-        }
-        return null;
-    }
-
-    public Team removePlayer(Long teamId, Long playerId) {
-        Team team = findById(teamId);
-        if (team != null) {
-            Player player = team.getPlayers().stream().filter(b -> b.getId().equals(playerId)).findFirst().orElse(null);
-            if (player != null) {
-                team.removePlayer(player);
-                return save(team);
-            }
-        }
-        return null;
-    }
 }
+
