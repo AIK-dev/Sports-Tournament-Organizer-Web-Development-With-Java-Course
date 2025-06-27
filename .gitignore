@@ -2,4 +2,4 @@
 Sports-Tournament-Organizer-Web-Development-With-Java-Course-Working-On-Initial-Solution-For-Player-And-Team.iml
 
 # Exclude Maven build directory
-/targetgit/
+/sports-tournament-organizer/target

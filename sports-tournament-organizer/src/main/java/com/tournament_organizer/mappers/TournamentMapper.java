@@ -1,5 +1,6 @@
 package com.tournament_organizer.mappers;
 
+import com.tournament_organizer.dto.participation.ParticipationOutDTO;
 import com.tournament_organizer.dto.tournament.TournamentInDTO;
 import com.tournament_organizer.dto.tournament.TournamentOutDTO;
 import com.tournament_organizer.dto.venue.VenueOutDTO;
@@ -57,12 +58,22 @@ public class TournamentMapper {
             entity.setVenues(venues);
         }
     }
+
     public TournamentOutDTO toDto(Tournament t) {
         List<VenueOutDTO> venueDtos = t.getVenues()
                 .stream()
                 .map(v -> new VenueOutDTO(
                         v.getId(), v.getName(), v.getCity(), v.getCapacity(), v.getSupportedSports()))
                 .toList();
+        // TODO: Implement this with information supplied from TeamOutDTOs and PlayerOutDTOs
+        List<ParticipationOutDTO> participationDTOs = t.getParticipations()
+                .stream()
+                .map(p -> new ParticipationOutDTO(
+                        p.getParticipantId(),
+                        p.getPlayer() == null ? null : p.getPlayer().getId(),
+                        p.getTeam() == null ? null : p.getTeam().getId(),
+                        p.getTournament().getId()
+                )).toList();
         return new TournamentOutDTO(
                 t.getId(),
                 t.getName(),
@@ -72,6 +83,7 @@ public class TournamentMapper {
                 t.getEndDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime(),
                 t.getDrawType(),
                 venueDtos,
+                participationDTOs,
                 t.getRules()
         );
     }

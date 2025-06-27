@@ -1,5 +1,6 @@
 package com.tournament_organizer.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.TeamType;
 import jakarta.persistence.*;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class Team  {
     @Enumerated(EnumType.STRING)
     private TeamType type;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> players = new ArrayList<>();
 }

@@ -1,14 +1,11 @@
 package com.tournament_organizer.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Check;
-
-import java.io.Serializable;
 
 
 @Entity

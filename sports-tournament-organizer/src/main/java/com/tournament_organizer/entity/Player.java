@@ -1,6 +1,6 @@
 package com.tournament_organizer.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.Gender;
 import jakarta.persistence.*;
@@ -8,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.aspectj.weaver.loadtime.Agent;
-
-import java.io.Serializable;
 
 @Setter
 @NoArgsConstructor
@@ -35,6 +32,7 @@ public class Player {
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;

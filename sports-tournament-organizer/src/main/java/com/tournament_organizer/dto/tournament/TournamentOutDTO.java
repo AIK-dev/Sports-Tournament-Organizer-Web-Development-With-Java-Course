@@ -1,12 +1,9 @@
 package com.tournament_organizer.dto.tournament;
 
+import com.tournament_organizer.dto.participation.ParticipationOutDTO;
 import com.tournament_organizer.dto.venue.VenueOutDTO;
 import com.tournament_organizer.enums.DrawType;
 import com.tournament_organizer.enums.Sport;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,5 +22,6 @@ public class TournamentOutDTO {
     private LocalDateTime endDate;
     private DrawType drawType;
     private List<VenueOutDTO> venueIds;
+    private List<ParticipationOutDTO> participations;
     private String rules;
 }

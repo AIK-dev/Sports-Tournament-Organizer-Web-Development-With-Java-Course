@@ -1,7 +1,7 @@
 package com.tournament_organizer.mappers;
 
-import com.tournament_organizer.dto.participation.ParticipationCreationDTO;
-import com.tournament_organizer.dto.participation.ParticipationDisplayDTO;
+import com.tournament_organizer.dto.participation.ParticipationInDTO;
+import com.tournament_organizer.dto.participation.ParticipationOutDTO;
 import com.tournament_organizer.entity.Participation;
 import com.tournament_organizer.entity.Tournament;
 import com.tournament_organizer.enums.DrawType;
@@ -18,7 +18,7 @@ public class ParticipationMapper {
     private final PlayerRepository playerRepo;
     private final TeamRepository teamRepo;
     private final TournamentRepository tournamentRepo;
-    public Participation toEntity(ParticipationCreationDTO dto) {
+    public Participation toEntity(ParticipationInDTO dto) {
         Participation participation = new Participation();
         Tournament tournament = tournamentRepo.findById(dto.getTournamentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + dto.getTournamentId()));
@@ -36,7 +36,7 @@ public class ParticipationMapper {
         }
         return participation;
     }
-    public void updateEntity(Participation entity, ParticipationCreationDTO patch) {
+    public void updateEntity(Participation entity, ParticipationInDTO patch) {
         Tournament tournament = tournamentRepo.findById(patch.getTournamentId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Tournament " + patch.getTournamentId() + " not found"));
@@ -56,8 +56,8 @@ public class ParticipationMapper {
             entity.setPlayer(null);
         }
     }
-    public ParticipationDisplayDTO toDto(Participation participation) {
-        ParticipationDisplayDTO dto = new ParticipationDisplayDTO();
+    public ParticipationOutDTO toDto(Participation participation) {
+        ParticipationOutDTO dto = new ParticipationOutDTO();
         dto.setParticipantId(participation.getParticipantId());
         dto.setTournamentId(participation.getTournament().getId());
         if (participation.getPlayer() != null){

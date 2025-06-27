@@ -1,11 +1,10 @@
 package com.tournament_organizer.controller;
 
-
-import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.entity.Team;
 import com.tournament_organizer.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +28,13 @@ public class TeamController {
         return teamService.findAll();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Team> updateTeam(@PathVariable(value = "id") Long teamId,
+                                               @Valid @RequestBody Team teamDetails) {
+        Team updatedTeam = teamService.update(teamId, teamDetails);
+        return ResponseEntity.ok(updatedTeam);
+    }
+
     @GetMapping("/{id}")
     public Team getTeamById(@PathVariable Long id) {
         return teamService.findById(id);
@@ -39,14 +45,4 @@ public class TeamController {
         teamService.deleteById(id);
     }
 
-
-    /*@PostMapping("/{teamId}/players")
-    public Team addPlayer(@PathVariable Long teamId, @Valid @RequestBody Player player) {
-        return teamService.addPlayer(teamId, player);
-    }
-
-    @DeleteMapping("/{teamId}/players/{playerId}")
-    public Team removePlayer(@PathVariable Long teamId, @PathVariable Long playerId) {
-        return teamService.removePlayer(teamId, playerId);
-    }*/
 }
