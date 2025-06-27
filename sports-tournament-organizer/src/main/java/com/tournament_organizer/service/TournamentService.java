@@ -6,12 +6,10 @@ import com.tournament_organizer.entity.Tournament;
 import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.mappers.TournamentMapper;
 import com.tournament_organizer.repository.TournamentRepository;
-import org.hibernate.validator.internal.metadata.aggregated.rule.OverridingMethodMustNotAlterParameterConstraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -23,7 +21,6 @@ public class TournamentService {
         this.tournamentRepository = tournamentRepository;
         this.mapper = mapper;
     }
-
 
     public TournamentOutDTO create(TournamentInDTO dto) {
         Tournament entity = mapper.toEntity(dto);

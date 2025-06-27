@@ -1,8 +1,11 @@
 package com.tournament_organizer.service;
 
+import com.tournament_organizer.dto.player.PlayerInDTO;
+import com.tournament_organizer.dto.player.PlayerOutDTO;
 import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.entity.Team;
 import com.tournament_organizer.exception.ResourceNotFoundException;
+import com.tournament_organizer.mappers.PlayerMapper;
 import com.tournament_organizer.repository.PlayerRepository;
 import com.tournament_organizer.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,32 +18,36 @@ import java.util.List;
 public class PlayerService {
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
+    private final PlayerMapper playerMapper;
+
+
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository) {
+    public PlayerService(PlayerRepository playerRepository, PlayerMapper playerMapper, TeamRepository teamRepository) {
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
+        this.playerMapper = playerMapper;
     }
 
-    public Player save(Player player) {
-        return playerRepository.save(player);
+    @Transactional
+    public PlayerOutDTO save(PlayerInDTO playerInDTO) {
+        Player playerEntity = playerMapper.toEntity(playerInDTO);
+        return  playerMapper.toDto(playerRepository.save(playerEntity));
     }
 
-    public List<Player> findAll() {
-        return playerRepository.findAll();
+    public List<PlayerOutDTO> findAll() {
+        return playerRepository.findAll().stream().map(playerMapper::toDto).toList();
     }
 
     public Player findById(Long playerId)  {
         return playerRepository.findById(playerId).orElseThrow(()
                 -> new ResourceNotFoundException(String.format("Player %s", playerId)));
     }
-    public Player update(Long id, Player patch)  {
-        Player p = findById(id);
-        p.setFirstName(patch.getFirstName());
-        p.setSecondName(patch.getSecondName());
-        p.setAge(patch.getAge());
-        p.setGender(patch.getGender());
-        p.setLevel(patch.getLevel());
-        return p;
+
+    @Transactional
+    public PlayerOutDTO update(Long id, PlayerInDTO playerInDTO)  {
+        Player playerEntity = findById(id);
+        playerMapper.updateEntity(playerEntity, playerInDTO);
+        return playerMapper.toDto(playerRepository.save(playerEntity));
     }
 
     public void deletePlayer(Player player) {
@@ -72,4 +79,3 @@ public class PlayerService {
         return playerRepository.findByTeamId(teamId);
     }
 }
-

@@ -1,5 +1,7 @@
 package com.tournament_organizer.controller;
 
+import com.tournament_organizer.dto.player.PlayerInDTO;
+import com.tournament_organizer.dto.player.PlayerOutDTO;
 import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.service.PlayerService;
 import jakarta.validation.Valid;
@@ -21,13 +23,14 @@ public class PlayerController {
     }
 
     @PostMapping
-    public ResponseEntity< Player >createPlayer(@Valid @RequestBody Player Player) {
-        Player created = playerService.save(Player);
+    public ResponseEntity< PlayerOutDTO >createPlayer(@Valid @RequestBody PlayerInDTO playerInDTO) {
+        PlayerOutDTO created = playerService.save(playerInDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
-    public List<Player> getAllPlayers() {
+    public List<PlayerOutDTO> getAllPlayers() {
         return playerService.findAll();
     }
 
@@ -37,10 +40,10 @@ public class PlayerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity <Player> updatePlayer(@PathVariable(value = "id") Long playerId,
-                                                      @Valid @RequestBody Player playerDetails) {
-        Player player = playerService.update(playerId, playerDetails);
-        return ResponseEntity.ok(player);
+    public ResponseEntity <PlayerOutDTO> updatePlayer(@PathVariable(value = "id") Long playerId,
+                                                      @Valid @RequestBody PlayerInDTO playerInDTO) {
+        PlayerOutDTO playerOutDTO = playerService.update(playerId, playerInDTO);
+        return ResponseEntity.ok(playerOutDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -48,6 +51,7 @@ public class PlayerController {
     public void deletePlayer(@PathVariable Long id) {
         playerService.deleteById(id);
     }
+
     @PostMapping("/{playerId}/team/{teamId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addToTeam(@PathVariable Long playerId,
