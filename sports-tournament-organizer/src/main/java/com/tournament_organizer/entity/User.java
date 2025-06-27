@@ -8,7 +8,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Setter
 @Getter
 @Entity
@@ -34,8 +33,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role = Role.VIEWER;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Player player;
+
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+//    private Player player;
 
     public User() {
     }
