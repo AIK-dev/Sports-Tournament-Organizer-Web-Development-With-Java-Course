@@ -28,6 +28,12 @@ public class TournamentMapper {
         t.setRules(dto.getRules());
         if (dto.getVenueIds() != null && !dto.getVenueIds().isEmpty()) {
             List<Venue> venues = venueRepo.findAllById(dto.getVenueIds());
+            for (Venue venue : venues){
+                if(!venue.getSupportedSports().contains(dto.getSport())){
+                    throw new IllegalArgumentException(String.format("Venue with name %s doesn't support %s",
+                            venue.getName(), dto.getSport()));
+                }
+            }
             t.setVenues(venues);
         }
         return t;
@@ -41,14 +47,21 @@ public class TournamentMapper {
         entity.setDrawType(dto.getDrawType());
         entity.setRules(dto.getRules());
         if (dto.getVenueIds() != null) {
-            entity.setVenues(venueRepo.findAllById(dto.getVenueIds()));
+            List<Venue> venues = venueRepo.findAllById(dto.getVenueIds());
+            for (Venue venue : venues){
+                if (!venue.getSupportedSports().contains(dto.getSport())) {
+                    throw new IllegalArgumentException(String.format("Venue with name %s doesn't support %s",
+                            venue.getName(), dto.getSport()));
+                }
+            }
+            entity.setVenues(venues);
         }
     }
     public TournamentOutDTO toDto(Tournament t) {
         List<VenueOutDTO> venueDtos = t.getVenues()
                 .stream()
                 .map(v -> new VenueOutDTO(
-                        v.getId(), v.getName(), v.getCity(), v.getCapacity()))
+                        v.getId(), v.getName(), v.getCity(), v.getCapacity(), v.getSupportedSports()))
                 .toList();
         return new TournamentOutDTO(
                 t.getId(),
