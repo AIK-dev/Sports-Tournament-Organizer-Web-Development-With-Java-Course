@@ -1,5 +1,6 @@
 package com.tournament_organizer.entity;
 
+import com.tournament_organizer.enums.Sport;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,11 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-//TODO OPTIONAL Add logic from the enum sport like in this venue you can play this and that sport nothing else this is for
-// creating a tournament and if the venue is only for football but want to make basketball tournament it will give error
-// I think for a list of the Sport and when you create a tournament you will get the sports from this venue and if it
-// match with the sport of the tournament it will be 200+ or error
+import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -25,6 +24,14 @@ public class Venue {
     private String name;
     private String city;
     private int capacity;
+
+    @ElementCollection(targetClass = Sport.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "venue_sports",
+            joinColumns = @JoinColumn(name = "venue_id"))
+    @Column(name = "sport", nullable = false)
+    private Set<Sport> supportedSports = new HashSet<>();
 
     @ManyToMany(mappedBy = "venues")
     private List<Tournament> tournaments = new ArrayList<>();

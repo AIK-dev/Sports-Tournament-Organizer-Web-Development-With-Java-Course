@@ -2,6 +2,7 @@ package com.tournament_organizer.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tournament_organizer.enums.AgeGroup;
+import com.tournament_organizer.enums.Sport;
 import com.tournament_organizer.enums.TeamType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,9 @@ public class Team  {
 
     @Enumerated(EnumType.STRING)
     private TeamType type;
+
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)

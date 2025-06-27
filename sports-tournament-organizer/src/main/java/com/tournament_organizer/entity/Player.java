@@ -3,6 +3,7 @@ package com.tournament_organizer.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.Gender;
+import com.tournament_organizer.enums.Sport;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class Player {
 
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
+
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)

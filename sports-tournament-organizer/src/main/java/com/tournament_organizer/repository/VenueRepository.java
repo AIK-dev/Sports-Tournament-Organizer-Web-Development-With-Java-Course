@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VenueRepository extends JpaRepository<Venue, Long> {
+    boolean existsByNameIgnoreCaseAndCityIgnoreCase(String name, String city);
+    boolean existsByNameIgnoreCaseAndCityIgnoreCaseAndIdNot(String name,String city, Long id);
 }

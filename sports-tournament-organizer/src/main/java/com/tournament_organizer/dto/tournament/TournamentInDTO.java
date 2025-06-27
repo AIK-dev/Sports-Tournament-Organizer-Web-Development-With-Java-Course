@@ -1,7 +1,11 @@
 package com.tournament_organizer.dto.tournament;
 
+import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.DrawType;
 import com.tournament_organizer.enums.Sport;
+import com.tournament_organizer.enums.TeamType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -30,4 +34,11 @@ public class TournamentInDTO {
     private List<Long> venueIds;
     @NotBlank
     private String rules;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private AgeGroup level;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private TeamType category;
 }
