@@ -75,41 +75,50 @@ public class ParticipationMapper {
         if ((playerId == null) == (teamId == null))
             throw new IllegalStateException("Exactly one of playerId or teamId must be supplied");
     }
+
+    private void checkEligibilityPlayer(Tournament tournament, Long playerId) {
+        Player p = playerRepo.findById(playerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Player " + playerId));
+        if (p.getLevel() != tournament.getLevel()) {
+            throw new IllegalStateException("Player level differs from tournament level");
+        }
+        if (tournament.getCategory() == TeamType.MALE && p.getGender() != Gender.MALE)
+            throw new IllegalStateException("This is a male-only tournament");
+        if (tournament.getCategory() == TeamType.FEMALE && p.getGender() != Gender.FEMALE)
+            throw new IllegalStateException("This is a female-only tournament");
+    }
+
+    private void checkEligibilityTeam(Tournament tournament, Long teamId) {
+        Team team = teamRepo.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team " + teamId));
+        if (team.getAgeGroup() != tournament.getLevel()) {
+            throw new IllegalStateException("Team level differs from tournament level");
+        }
+        switch (tournament.getCategory()) {
+            case MIXED -> {
+                if (team.getType() != TeamType.MIXED) {
+                    throw new IllegalStateException(
+                            "Only mixed teams can play in a mixed tournament");
+                }
+            }
+            case MALE, FEMALE -> {
+                if (team.getType() != tournament.getCategory()) {
+                    throw new IllegalStateException(
+                            "Team gender category must be " + tournament.getCategory());
+                }
+            }
+        }
+    }
+
     private void checkEligibility(Tournament tournament, Long playerId, Long teamId) {
         validateDrawType(tournament.getDrawType(), playerId, teamId);
         if (tournament.getParticipations().size() >= tournament.getParticipationLimit()) {
             throw new IllegalStateException("Participation limit reached for tournament " + tournament.getName());
         }
         if (playerId != null) {
-            Player p = playerRepo.findById(playerId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Player " + playerId));
-            if (p.getLevel() != tournament.getLevel()) {
-                throw new IllegalStateException("Player level differs from tournament level");
-            }
-            if (tournament.getCategory() == TeamType.MALE && p.getGender() != Gender.MALE)
-                throw new IllegalStateException("This is a male-only tournament");
-            if (tournament.getCategory() == TeamType.FEMALE && p.getGender() != Gender.FEMALE)
-                throw new IllegalStateException("This is a female-only tournament");
+            checkEligibilityPlayer(tournament, playerId);
         } else {
-            Team team = teamRepo.findById(teamId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Team " + teamId));
-            if (team.getAgeGroup() != tournament.getLevel()) {
-                throw new IllegalStateException("Team level differs from tournament level");
-            }
-            switch (tournament.getCategory()) {
-                case MIXED -> {
-                    if (team.getType() != TeamType.MIXED) {
-                        throw new IllegalStateException(
-                                "Only mixed teams can play in a mixed tournament");
-                    }
-                }
-                case MALE, FEMALE -> {
-                    if (team.getType() != tournament.getCategory()) {
-                        throw new IllegalStateException(
-                                "Team gender category must be " + tournament.getCategory());
-                    }
-                }
-            }
+            checkEligibilityTeam(tournament, teamId);
         }
     }
 }
