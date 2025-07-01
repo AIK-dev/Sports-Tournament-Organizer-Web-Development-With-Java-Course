@@ -31,7 +31,7 @@ public class ParticipationMapper {
         if (dto.getPlayerId() != null) {
             participation.setPlayer(playerRepo.findById(dto.getPlayerId())
                     .orElseThrow(() -> new ResourceNotFoundException("Player " + dto.getPlayerId())));
-        } else {                                        // teamId is guaranteed non-null here
+        } else {
             participation.setTeam(teamRepo.findById(dto.getTeamId())
                     .orElseThrow(() -> new ResourceNotFoundException("Team " + dto.getTeamId())));
         }
@@ -43,7 +43,6 @@ public class ParticipationMapper {
                         new ResourceNotFoundException("Tournament " + patch.getTournamentId() + " not found"));
         checkEligibility(tournament, patch.getPlayerId(), patch.getTeamId());
         entity.setTournament(tournament);
-
         if (patch.getPlayerId() != null) {
             entity.setPlayer(playerRepo.findById(patch.getPlayerId())
                     .orElseThrow(() -> new ResourceNotFoundException("Player " + patch.getPlayerId() + " not found")));
@@ -86,6 +85,9 @@ public class ParticipationMapper {
             if (p.getLevel() != tournament.getLevel()) {
                 throw new IllegalStateException("Player level differs from tournament level");
             }
+            if(p.getSport() != tournament.getSport()){
+                throw new IllegalStateException("Player sport differs from tournament sport");
+            }
             if (tournament.getCategory() == TeamType.MALE && p.getGender() != Gender.MALE)
                 throw new IllegalStateException("This is a male-only tournament");
             if (tournament.getCategory() == TeamType.FEMALE && p.getGender() != Gender.FEMALE)
@@ -95,6 +97,9 @@ public class ParticipationMapper {
                     .orElseThrow(() -> new ResourceNotFoundException("Team " + teamId));
             if (team.getAgeGroup() != tournament.getLevel()) {
                 throw new IllegalStateException("Team level differs from tournament level");
+            }
+            if(team.getSport() != tournament.getSport()){
+                throw new IllegalStateException("Team sport differs from tournament sport");
             }
             switch (tournament.getCategory()) {
                 case MIXED -> {

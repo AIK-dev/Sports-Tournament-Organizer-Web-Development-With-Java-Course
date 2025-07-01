@@ -1,6 +1,7 @@
 package com.tournament_organizer.controller;
 
 import com.tournament_organizer.dto.user.UserInDTO;
+import com.tournament_organizer.dto.user.UserRoleDTO;
 import com.tournament_organizer.entity.User;
 import com.tournament_organizer.service.UserService;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,16 +36,24 @@ public class UserController {
     public ResponseEntity<User> find(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.find(id));
     }
-
+    @PreAuthorize("@authz.isCurrentUser(#id) or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable Integer id,
                                        @RequestBody @Valid UserInDTO dto) {
         return ResponseEntity.ok(userService.update(id, dto));
     }
-
+    @PreAuthorize("@authz.isCurrentUser(#id) or hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         userService.delete(id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<User> changeRole(@PathVariable Integer id,
+                                           @RequestBody @Valid UserRoleDTO dto) {
+        User updated = userService.changeRole(id, dto.getRole());
+        return ResponseEntity.ok(updated);
     }
 }

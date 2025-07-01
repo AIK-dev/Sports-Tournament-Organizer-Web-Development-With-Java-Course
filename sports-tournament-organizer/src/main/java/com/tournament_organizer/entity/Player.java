@@ -21,29 +21,24 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private String firstName;
-
     private String secondName;
-
     private Integer age;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
-
     @Enumerated(EnumType.STRING)
     private Sport sport;
-
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 }

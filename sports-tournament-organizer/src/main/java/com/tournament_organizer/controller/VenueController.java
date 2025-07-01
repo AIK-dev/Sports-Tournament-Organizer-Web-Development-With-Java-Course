@@ -7,6 +7,7 @@ import com.tournament_organizer.service.VenueService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class VenueController {
     public VenueController(VenueService venueService) {
         this.venueService = venueService;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<VenueOutDTO> create(@Valid @RequestBody VenueInDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(venueService.create(dto));
@@ -33,20 +35,26 @@ public class VenueController {
     public ResponseEntity<VenueOutDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(venueService.findById(id));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<VenueOutDTO> update(@PathVariable Long id, @Valid @RequestBody VenueInDTO dto) {
         return ResponseEntity.ok(venueService.update(id, dto));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void delete(@PathVariable Long id) {
         venueService.deleteById(id);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/sports/{sport}")
     @ResponseStatus(NO_CONTENT)
     public void addSport(@PathVariable Long id, @PathVariable Sport sport) {
         venueService.addSport(id, sport);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/sports/{sport}") @ResponseStatus(NO_CONTENT)
     public void removeSport(@PathVariable Long id, @PathVariable Sport sport) {
         venueService.removeSport(id, sport);

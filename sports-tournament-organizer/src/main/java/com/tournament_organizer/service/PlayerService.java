@@ -1,12 +1,19 @@
 package com.tournament_organizer.service;
 
+import com.tournament_organizer.dto.player.PlayerInDTO;
+import com.tournament_organizer.dto.player.PlayerOutDTO;
 import com.tournament_organizer.entity.Player;
 import com.tournament_organizer.entity.Team;
+import com.tournament_organizer.entity.User;
 import com.tournament_organizer.enums.Gender;
+import com.tournament_organizer.enums.Role;
 import com.tournament_organizer.exception.ResourceNotFoundException;
+import com.tournament_organizer.mappers.PlayerMapper;
 import com.tournament_organizer.repository.PlayerRepository;
 import com.tournament_organizer.repository.TeamRepository;
+import com.tournament_organizer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,32 +23,40 @@ import java.util.List;
 public class PlayerService {
     private final PlayerRepository playerRepository;
     private final TeamRepository teamRepository;
+    private final PlayerMapper playerMapper;
+    private final UserRepository userRepository;
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository) {
+    public PlayerService(PlayerRepository playerRepository, TeamRepository teamRepository, PlayerMapper playerMapper, UserRepository userRepository) {
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
+        this.playerMapper = playerMapper;
+        this.userRepository = userRepository;
     }
 
-    public Player save(Player player) {
-        return playerRepository.save(player);
+    public PlayerOutDTO save(PlayerInDTO dto) {
+        Player player = playerMapper.toEntity(dto);
+        player.setOwner(currentUser());
+        return playerMapper.toDto(playerRepository.save(player));
     }
 
-    public List<Player> findAll() {
-        return playerRepository.findAll();
+    public List<PlayerOutDTO> findAll() {
+        return playerRepository.findAll().stream()
+                .map(playerMapper::toDto)
+                .toList();
     }
 
-    public Player findById(Long playerId)  {
-        return playerRepository.findById(playerId).orElseThrow(()
+    public PlayerOutDTO findById(Long playerId)  {
+         Player found = playerRepository.findById(playerId).orElseThrow(()
                 -> new ResourceNotFoundException(String.format("Player %s", playerId)));
+        return playerMapper.toDto(found);
     }
-    public Player update(Long id, Player patch)  {
-        Player p = findById(id);
-        p.setFirstName(patch.getFirstName());
-        p.setSecondName(patch.getSecondName());
-        p.setAge(patch.getAge());
-        p.setGender(patch.getGender());
-        p.setLevel(patch.getLevel());
-        return p;
+    @Transactional
+    public PlayerOutDTO update(Long id, PlayerInDTO dto)  {
+        Player p = playerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Player with id %d not found",
+                        id)));
+        playerMapper.updateEntity(p, dto);
+        return playerMapper.toDto(p);
     }
 
     public void deletePlayer(Player player) {
@@ -49,41 +64,36 @@ public class PlayerService {
     }
 
     public void deleteById(Long id)  {
-        Player player = findById(id);
-        deletePlayer(player);
+        if (!playerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Player " + id + " not found");
+        }
+        playerRepository.deleteById(id);
     }
 
     @Transactional
     public void assignToTeam(Long playerId, Long teamId)  {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Player %s", playerId)));
+        if (player.getTeam() != null && player.getTeam().getId() != teamId){
+            throw new IllegalStateException("Player already assigned to another team");
+        }
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team"));
-        if(player.getSport() != team.getSport()){
-            throw new IllegalStateException(String.format("Player with sport %s does not match team sport %s",
-                    player.getSport(), team.getSport()));
-        }
-        if (player.getLevel() != team.getAgeGroup()) {
-            throw new IllegalStateException(String.format("Player age group %s does not match team age group %s",
-                    player.getLevel(), team.getAgeGroup()));
-        }
-        switch (team.getType()) {
-            case MIXED:
-                break;
-            case MALE:
-                if (player.getGender() != Gender.MALE) {
-                    throw new IllegalStateException("Team is male-only");
-                }
-                break;
-            case FEMALE:
-                if (player.getGender() != Gender.FEMALE) {
-                    throw new IllegalStateException("Team is female-only");
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unsupported team type: " + team.getType());
-        }
+        validateSport(player, team);
+        validateAgeGroup(player, team);
+        validateGender(player, team);
         player.setTeam(team);
+    }
+    @Transactional
+    public PlayerOutDTO reassignOwner(Long playerId, Integer newOwnerId) {
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Player " + playerId));
+        User newOwner = userRepository.findById(newOwnerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User " + newOwnerId));
+        if (newOwner.getRole() != Role.ORGANIZER && newOwner.getRole() != Role.ADMIN)
+            throw new IllegalStateException("New owner must be ORGANIZER or ADMIN");
+        player.setOwner(newOwner);
+        return playerMapper.toDto(player);
     }
     @Transactional
     public void removeFromTeam(Long playerId)  {
@@ -91,8 +101,38 @@ public class PlayerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Player"));
         player.setTeam(null);
     }
-    public List<Player> roster(Long teamId) {
-        return playerRepository.findByTeamId(teamId);
+    public List<PlayerOutDTO> roster(Long teamId) {
+        return playerRepository.findByTeamId(teamId).stream()
+                .map(playerMapper::toDto)
+                .toList();
+    }
+    private void validateSport(Player p, Team t) {
+        if (p.getSport() != t.getSport()) {
+            throw new IllegalStateException(String.format(
+                    "Player sport %s does not match team sport %s", p.getSport(), t.getSport()));
+        }
+    }
+    private void validateAgeGroup(Player p, Team t) {
+        if (p.getLevel() != t.getAgeGroup()) {
+            throw new IllegalStateException(String.format(
+                    "Player age group %s does not match team age group %s", p.getLevel(), t.getAgeGroup()));
+        }
+    }
+    private void validateGender(Player p, Team t) {
+        switch (t.getType()) {
+            case MIXED -> {}
+            case MALE -> require(p.getGender() == Gender.MALE,   "Team is male-only");
+            case FEMALE -> require(p.getGender() == Gender.FEMALE, "Team is female-only");
+            default -> throw new IllegalStateException("Unsupported team type " + t.getType());
+        }
+    }
+    private void require(boolean condition, String message) {
+        if (!condition)
+            throw new IllegalStateException(message);
+    }
+    private User currentUser() {
+        String uname = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(uname).orElseThrow();
     }
 }
 

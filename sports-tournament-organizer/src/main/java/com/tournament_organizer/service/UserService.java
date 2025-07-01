@@ -2,6 +2,8 @@ package com.tournament_organizer.service;
 
 import com.tournament_organizer.dto.user.UserInDTO;
 import com.tournament_organizer.entity.User;
+import com.tournament_organizer.enums.Role;
+import com.tournament_organizer.exception.ResourceNotFoundException;
 import com.tournament_organizer.mappers.UserMapper;
 import com.tournament_organizer.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -41,6 +43,12 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()->new EntityNotFoundException("User"));
     }
 
+    public User changeRole(Integer id, Role role){
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("User with id %d not found", id)));
+        user.setRole(role);
+        return userRepository.save(user);
+    }
 
     public User update(Integer id, UserInDTO dto) {
         User userToUpdate = find(id);

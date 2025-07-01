@@ -43,14 +43,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserInDTO dto, BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<?> register(@Valid @RequestBody UserInDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(dto));
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
@@ -61,7 +56,7 @@ public class AuthController {
         RefreshToken rt = refService.create(user);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", rt.getToken())
                 .httpOnly(true).secure(true).sameSite("None")
-                .path("/api/auth")
+                .path("/api/v1/auth")
                 .maxAge(Duration.ofDays(30)).build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -75,7 +70,7 @@ public class AuthController {
         String access = jwtUtil.generateToken(user);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", newRt.getToken())
                 .httpOnly(true).secure(true).sameSite("None")
-                .path("/api/auth")
+                .path("/api/v1/auth")
                 .maxAge(Duration.ofDays(30)).build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -87,7 +82,7 @@ public class AuthController {
         refService.delete(token);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true).secure(true).sameSite("None")
-                .path("/api/auth")
+                .path("/api/v1/auth")
                 .maxAge(0).build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
