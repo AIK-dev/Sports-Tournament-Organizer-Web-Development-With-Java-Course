@@ -56,4 +56,10 @@ public class UserController {
         User updated = userService.changeRole(id, dto.getRole());
         return ResponseEntity.ok(updated);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/players/{playerId}")
+    public ResponseEntity<User> attachPlayer(@PathVariable Integer id, @PathVariable Long playerId) {
+        User updated = userService.attachPlayer(id, playerId);
+        return ResponseEntity.ok(updated);
+    }
 }
