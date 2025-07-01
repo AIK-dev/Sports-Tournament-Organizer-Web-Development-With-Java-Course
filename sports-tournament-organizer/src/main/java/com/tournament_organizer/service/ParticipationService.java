@@ -60,7 +60,6 @@ public class ParticipationService {
                                                    ParticipationInDTO participationCreationDTO)  {
         Participation participation = participationRepo.findById(participationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Participation " + participationId + " not found"));
-
         mapper.updateEntity(participation, participationCreationDTO);
         participationRepo.save(participation);
         return mapper.toDto(participation);
