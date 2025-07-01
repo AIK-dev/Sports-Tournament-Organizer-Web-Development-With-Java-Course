@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb
+    environment:
+      MARIADB_DATABASE: demo
+      MARIADB_USER: user1
+      MARIADB_PASSWORD: password1
+      MARIADB_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mariadb://db:3306/demo"
+      SPRING_DATASOURCE_USERNAME: "user1"
+      SPRING_DATASOURCE_PASSWORD: "password1"
