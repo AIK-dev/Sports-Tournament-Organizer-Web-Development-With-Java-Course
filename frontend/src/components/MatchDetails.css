@@ -1,0 +1,82 @@
+.match-details-card {
+    background-color: #2d3748;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+.match-details-placeholder {
+    background-color: #2d3748;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.match-details-placeholder p {
+    color: #9ca3af;
+}
+
+.match-details-header p {
+    font-size: 0.875rem;
+    color: #818cf8;
+    font-weight: 600;
+}
+
+.match-details-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+
+.competitor-display {
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.competitor-display .name {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.competitor-display .vs {
+    color: #a0aec0;
+    font-weight: 700;
+}
+
+.match-meta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.match-meta-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.match-meta-row .label {
+    color: #a0aec0;
+}
+
+.match-meta-row .value {
+    font-weight: 600;
+}
+
+.match-meta-row .status-value {
+    background-color: rgba(30, 58, 138, 0.5);
+    color: #93c5fd;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}

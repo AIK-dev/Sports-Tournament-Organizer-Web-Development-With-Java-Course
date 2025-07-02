@@ -3,11 +3,14 @@ import SportsNav from '../components/SportsNav';
 import TournamentList from '../components/TournamentList';
 import MatchDetails from '../components/MatchDetails';
 import { SPORTS_DATA, TOURNAMENTS_DATA, MATCHES_DATA } from '../data/mockData';
+import './Home.css';
 
 export default function Home() {
+    // State for selected sport and match
     const [selectedSportId, setSelectedSportId] = useState(null);
     const [selectedMatchId, setSelectedMatchId] = useState(null);
 
+    // Set the first sport as default on initial load
     useEffect(() => {
         if (SPORTS_DATA.length > 0) {
             setSelectedSportId(SPORTS_DATA[0].id);
@@ -17,7 +20,7 @@ export default function Home() {
     // Handler for selecting a new sport
     const handleSelectSport = (sportId) => {
         setSelectedSportId(sportId);
-        setSelectedMatchId(null);
+        setSelectedMatchId(null); // Reset match selection when sport changes
     };
 
     // Derived state: filter data based on selections
@@ -26,17 +29,18 @@ export default function Home() {
     const selectedMatchTournament = selectedMatch ? TOURNAMENTS_DATA.find(t => t.id === selectedMatch.tournamentId) : null;
 
     return (
-        <div className="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+        <div className="home-page-layout">
             <SportsNav
                 sports={SPORTS_DATA}
                 selectedSportId={selectedSportId}
                 onSelectSport={handleSelectSport}
             />
 
-            <main className="container mx-auto p-4 sm:p-6 lg:p-8 flex-grow">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <main className="main-content-area">
+                <div className="content-grid">
+
                     {/* Center Column */}
-                    <div className="lg:col-span-2">
+                    <div className="center-column">
                         {selectedSportId ? (
                             <TournamentList
                                 tournaments={visibleTournaments}
@@ -45,14 +49,14 @@ export default function Home() {
                                 onSelectMatch={setSelectedMatchId}
                             />
                         ) : (
-                            <div className="text-center py-20">
-                                <p className="text-gray-400">Select a sport to see today's matches.</p>
+                            <div className="select-sport-message">
+                                <p>Select a sport to see today's matches.</p>
                             </div>
                         )}
                     </div>
 
                     {/* Right Column */}
-                    <aside className="lg:col-span-1 lg:sticky top-24 self-start">
+                    <aside className="right-column-sidebar">
                         <MatchDetails
                             match={selectedMatch}
                             tournament={selectedMatchTournament}
