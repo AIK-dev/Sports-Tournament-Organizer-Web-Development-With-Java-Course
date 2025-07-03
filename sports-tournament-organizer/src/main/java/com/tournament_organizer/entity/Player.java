@@ -21,11 +21,16 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String firstName;
+
     private String secondName;
+
     private Integer age;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
     @Enumerated(EnumType.STRING)

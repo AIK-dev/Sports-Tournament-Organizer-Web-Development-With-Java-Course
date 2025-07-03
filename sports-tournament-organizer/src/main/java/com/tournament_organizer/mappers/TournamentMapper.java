@@ -15,7 +15,6 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-
 public class TournamentMapper {
     private final VenueRepository venueRepo;
     public Tournament toEntity(TournamentInDTO dto) {

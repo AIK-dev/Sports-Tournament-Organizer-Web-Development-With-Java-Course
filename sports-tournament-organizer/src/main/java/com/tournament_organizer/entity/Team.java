@@ -23,9 +23,12 @@ public class Team  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String name;
+
     @Enumerated(EnumType.STRING)
     private AgeGroup ageGroup;
+
     @Enumerated(EnumType.STRING)
     private TeamType type;
     @Enumerated(EnumType.STRING)

@@ -73,6 +73,8 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addToTeam(@PathVariable Long playerId,
                           @PathVariable Long teamId)  {
+        //TODO: Make sure to check whether the adding to team operation went through correctly and supply the appropriate response
+        // with HTTP.SUCCESSFUL if the operation went through or a failure message if the operation didn't succeed.
         playerService.assignToTeam(playerId, teamId);
     }
     @PreAuthorize("""
