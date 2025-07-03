@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,24 +26,24 @@ public class TournamentController {
     public List<TournamentOutDTO> getAllTournaments() {
         return tournamentService.findAll();
     }
-    //TODO If we use axios in the front end because Found is with status 302 it won't see it axios accept only 200+ statuses
     @GetMapping("/{id}")
     public ResponseEntity <TournamentOutDTO> getTournamentById(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(tournamentService.findById(id));
+        return ResponseEntity.ok(tournamentService.findById(id));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TournamentOutDTO> createTournament(@Valid @RequestBody TournamentInDTO dto) /*throws URISyntaxException*/ {
         TournamentOutDTO out = tournamentService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(out);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity <TournamentOutDTO> updateTournament(@PathVariable Long id,
                                                   @Valid @RequestBody TournamentInDTO dto)  {
         return ResponseEntity.status(HttpStatus.CREATED).body(tournamentService.update(id, dto));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

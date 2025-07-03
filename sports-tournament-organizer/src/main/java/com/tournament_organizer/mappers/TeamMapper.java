@@ -24,15 +24,12 @@ public class TeamMapper {
         team.setName(dto.getName());
         team.setAgeGroup(dto.getAgeGroup());
         team.setType(dto.getTeamType());
-
-        // Add optional the ability for adding the player ids from the get-go.
+        team.setSport(dto.getSport());
         if (dto.getPlayerIds() != null && !dto.getPlayerIds().isEmpty()) {
             List<Player> players = dto.getPlayerIds().stream()
                     .map(id -> playerRepository.findById(id)
                             .orElseThrow(() -> new ResourceNotFoundException("Player " + id + " not found")))
                     .collect(Collectors.toList());
-
-            // Set up the bidirectional relationship if needed between the player and the team as necessary.
             players.forEach(player -> player.setTeam(team));
             team.setPlayers(players);
         }
@@ -43,13 +40,12 @@ public class TeamMapper {
         team.setName(dto.getName());
         team.setAgeGroup(dto.getAgeGroup());
         team.setType(dto.getTeamType());
-
+        team.setSport(dto.getSport());
         if (dto.getPlayerIds() != null) {
             List<Player> players = dto.getPlayerIds().stream()
                     .map(id -> playerRepository.findById(id)
                             .orElseThrow(() -> new ResourceNotFoundException("Player " + id + " not found")))
                     .collect(Collectors.toList());
-
             players.forEach(player -> player.setTeam(team));
             team.setPlayers(players);
         }
@@ -66,17 +62,17 @@ public class TeamMapper {
                             player.getAge(),
                             player.getGender(),
                             player.getLevel(),
-                            team.getName()
-                )).collect(Collectors.toList());
+                            player.getSport(),
+                            team.getName(),
+                            player.getUser() != null ? player.getUser().getId() : null
+                    )).collect(Collectors.toList());
         }
-
         return new TeamOutDTO(
                 team.getId(),
                 team.getName(),
                 team.getAgeGroup(),
                 team.getType(),
-                // TODO: is it okay if this turns out to be null on certain occasions?
-                //  maybe this needs to be checked / tested.
+                team.getSport(),
                 playerDtos
         );
     }

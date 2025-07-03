@@ -1,0 +1,122 @@
+/* ---------- Player / Team / User forms ---------- */
+
+.playerForm {
+    max-width: 640px;
+    width: 100%;
+    background: #2d3748;          /* dark card */
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    color: #edf2f7;
+}
+
+.playerForm h2 {
+    margin-bottom: 4px;
+    color: #edf2f7;
+    font-weight: 700;
+}
+
+.formRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.textInput,
+.selectInput {
+    flex: 1 1 180px;
+    padding: 8px 10px;
+    border: 1px solid #4a5568;
+    border-radius: 4px;
+    font-size: 15px;
+    background: #1a202c;
+    color: #edf2f7;
+}
+
+.textInput:focus,
+.selectInput:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,.35);
+}
+
+/* Center wrapper below the fixed top-bar */
+.centerPage {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+/* ---------- Team selector styles ---------- */
+.teamSelectList {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.teamSelectItem {
+    background: #2d3748;
+    padding: 1rem 1.25rem;
+    border-radius: 0.375rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #edf2f7;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.teamSelectItem:hover {
+    background: #4a5568;
+    transform: translateY(-2px);
+}
+
+.teamSelectItem .primaryBtn {
+    flex-shrink: 0;
+}
+
+/* ---------- Inline action groups (OwnerBox, Edit/Delete) ---------- */
+.inline {
+    display: flex;
+    gap: 0.5rem;        /* spacing between controls */
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+/* ---------- Buttons ---------- */
+.primaryBtn {
+    background: #1d4ed8;
+    border: 0;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.primaryBtn:hover {
+    background: #2563eb;
+}
+
+.danger {
+    background: #e53935;          /* red variant */
+    border: 0;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.danger:hover {
+    background: #f44336;
+}

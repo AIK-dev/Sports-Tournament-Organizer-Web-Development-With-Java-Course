@@ -31,10 +31,11 @@ public class Team  {
 
     @Enumerated(EnumType.STRING)
     private TeamType type;
-
     @Enumerated(EnumType.STRING)
     private Sport sport;
-
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id")
+    private User owner;
     @JsonManagedReference
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> players = new ArrayList<>();

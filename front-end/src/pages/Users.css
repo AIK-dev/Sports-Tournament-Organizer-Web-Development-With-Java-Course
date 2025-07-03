@@ -1,0 +1,77 @@
+/* ---------- global dark shell (дублираме в случая, ако common.css липсва) ---------- */
+.home-topbar{
+    position: sticky; top: 0; left: 0; z-index: 30;
+    display: flex; gap: .5rem; align-items: center;
+    background: #1a202c; padding:.5rem 1rem; border-bottom:1px solid #2d3748;
+}
+.home-page-layout{background:#1a202c;color:#edf2f7;min-height:100vh;display:flex;flex-direction:column}
+.main-content-area{flex-grow:1;padding:1rem}
+@media(min-width:1024px){.main-content-area{padding:2rem}}
+.content-grid{display:grid;gap:2rem;grid-template-columns:1fr}
+@media(min-width:1024px){.content-grid{grid-template-columns:2fr 1fr}}
+.center-column{}
+
+.topBtn{
+    background:#4c51bf;border:0;color:#fff;font-weight:600;
+    padding:.40rem .9rem;border-radius:.375rem;cursor:pointer;font-size:.85rem;
+    transition:.2s;
+}
+.topBtn:hover{background:#6366f1}
+.navBtn{background:#4a5568}
+.navBtn:hover{background:#4a5568a6}
+
+/* ---------- search ---------- */
+.players-search{
+    width:320px;padding:8px 10px;margin-bottom:1rem;
+    border:1px solid #4a5568;border-radius:4px;font-size:15px;
+    background:#1a202c;color:#edf2f7;
+}
+
+/* ---------- table ---------- */
+.usersTable{
+    width:100%;border-collapse:collapse;font-size:15px;color:#edf2f7;
+}
+.usersTable th{
+    background:#2d3748;padding:10px 12px;text-align:left;font-weight:600;
+    border-bottom:1px solid #4a5568;
+}
+.usersTable td{
+    padding:10px 12px;border-bottom:1px solid #2d3748;
+}
+.usersTable tr:nth-child(even){background:#222b38}
+.usersTable tr:hover{background:#2e3744}
+
+/* ---------- badges ---------- */
+.badge{
+    display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;
+    font-weight:600;text-transform:capitalize;color:#fff;
+}
+.badge.admin       {background:#b71c1c}
+.badge.organizer   {background:#1565c0}
+.badge.participant {background:#2e7d32}
+.badge.viewer      {background:#424242}
+
+/* ---------- buttons ---------- */
+.actionBtn,
+.primaryBtn{
+    background:#1d4ed8;border:0;color:#fff;font-weight:600;
+    padding:6px 12px;border-radius:.375rem;cursor:pointer;font-size:13px;
+    transition:.2s;
+}
+.actionBtn:hover,
+.primaryBtn:hover{background:#2563eb}
+.actionBtn.danger{background:#e53935}
+.actionBtn.danger:hover{background:#f44336}
+.primaryBtn.small{padding:6px 10px;font-size:13px}
+
+/* inline selects & close btn */
+.actionsCell{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.actionsCell select{
+    padding:6px 8px;border-radius:4px;border:1px solid #4a5568;
+    background:#1a202c;color:#edf2f7;font-size:14px;
+}
+.xBtn{
+    background:none;border:0;font-size:20px;cursor:pointer;line-height:1;
+    color:#cbd5e0;
+}
+.xBtn:hover{color:#fff}

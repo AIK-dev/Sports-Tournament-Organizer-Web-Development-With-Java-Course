@@ -2,6 +2,7 @@ package com.tournament_organizer.dto.team;
 
 import com.tournament_organizer.dto.player.PlayerOutDTO;
 import com.tournament_organizer.enums.AgeGroup;
+import com.tournament_organizer.enums.Sport;
 import com.tournament_organizer.enums.TeamType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class TeamOutDTO {
     private String name;
     private AgeGroup ageGroup;
     private TeamType type;
+    private Sport sport;
     private List<PlayerOutDTO> players;
 }
-
 

@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +45,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Object> conflict(IllegalStateException exception, WebRequest request) {
         return build(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException exception, WebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, exception.getMessage(), request);
+    }
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<Object> forbidden(
+            AccessDeniedException ex, WebRequest req) {
+        return build(HttpStatus.FORBIDDEN, "Access denied", req);
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> unhandled(Exception exception, WebRequest request) {

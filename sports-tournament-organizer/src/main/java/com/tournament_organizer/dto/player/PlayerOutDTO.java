@@ -2,6 +2,7 @@ package com.tournament_organizer.dto.player;
 
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.Gender;
+import com.tournament_organizer.enums.Sport;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,11 @@ public class PlayerOutDTO {
     @Enumerated(EnumType.STRING)
     private AgeGroup level;
 
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
+
+
     private String associatedTeam;
+    private Integer userId;
 
 }

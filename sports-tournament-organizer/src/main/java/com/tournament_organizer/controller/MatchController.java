@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class MatchController {
     public MatchController(MatchService matchService) {
         this.matchService = matchService;
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MatchOutDTO> createMatch(@Valid @RequestBody MatchInDTO match) {
         MatchOutDTO created = matchService.save(match);
@@ -35,15 +36,15 @@ public class MatchController {
 
     @GetMapping("/{id}")
     public ResponseEntity <MatchOutDTO> getMatchById(@PathVariable Long id)  {
-        return ResponseEntity.status(HttpStatus.FOUND).body(matchService.findById(id));
+        return ResponseEntity.ok(matchService.findById(id));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity <MatchOutDTO> updateMatch(@PathVariable Long id,
                                                           @Valid @RequestBody MatchInDTO matchDetails) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(matchService.update(id, matchDetails));
+        return ResponseEntity.ok(matchService.update(id, matchDetails));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

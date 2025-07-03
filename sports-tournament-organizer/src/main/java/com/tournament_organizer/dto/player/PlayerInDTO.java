@@ -3,6 +3,7 @@ package com.tournament_organizer.dto.player;
 import com.tournament_organizer.enums.AgeGroup;
 import com.tournament_organizer.enums.Gender;
 
+import com.tournament_organizer.enums.Sport;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,8 @@ public class PlayerInDTO {
     @NotNull(message = "Level is required")
     private AgeGroup level;
 
+    @NotNull(message = "Sport is required")
+    private Sport sport;
+
     private Long teamId;
 }
-
