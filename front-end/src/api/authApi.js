@@ -1,63 +1,51 @@
+/* src/api/authApi.js */
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const API_ROOT = 'http://localhost:8080/api';
-let accessToken = null;
-let currentUser = null;
-let currentRoles = [];
 
-export const setAccessToken = (token) => {
+let accessToken   = null;
+let currentUser   = null;            // { userId, username }
+let currentRoles  = [];              // ['ADMIN', 'PARTICIPANT', …]
+
+export const setAccessToken = token => {
     accessToken = token;
-    if (accessToken) {
-        const parsed =     jwtDecode(accessToken);
-        const { sub: username, userId, roles = [] } = parsed;
-        currentUser  = { username, userId };
-        currentRoles = Array.isArray(roles) ? roles : [roles];   // safety
-    } else {
-        currentUser = null;
+
+    if (!token) {
+        currentUser  = null;
         currentRoles = [];
-
+        return;
     }
+
+    const { sub: username, userId, roles = [] } = jwtDecode(token);
+    currentUser  = { username, userId };
+    currentRoles = Array.isArray(roles) ? roles : [roles];
 };
-export const getAccessToken = () => {
-    return accessToken;
-};
+
+export const getAccessToken  = ()   => accessToken;
+export const clearAccessToken = ()  => (accessToken = null);
+
 export const getCurrentUser = () => currentUser;
-export const isAdmin         = () => currentRoles.includes('ADMIN');
-export const clearAccessToken = () => {
-    accessToken = null;
-};
+export const isAdmin        = () => currentRoles.includes('ADMIN');
+export const hasRole        = role => currentRoles.includes(role);
 
-export function getUID(){
-    return currentUser.userId;
-}
+export const getUID = () => currentUser?.userId;
 
+/* ---------- auth endpoints ---------- */
 export const login = async (username, password) => {
-    const response = await axios.post(`${API_ROOT}/v1/auth/login`, { username, password }, {
-        withCredentials: true
-    });
-    setAccessToken(response.data.accessToken);
-    return response;
+    const { data } = await axios.post(`${API_ROOT}/v1/auth/login`, { username, password }, { withCredentials:true });
+    setAccessToken(data.accessToken);
 };
 
-export const register = async (userData) => {
-    const response = await axios.post(`${API_ROOT}/v1/auth/register`, userData, {
-        withCredentials: true
-    });
-    return response;
-};
+export const register = userData =>
+    axios.post(`${API_ROOT}/v1/auth/register`, userData, { withCredentials:true });
 
 export const refreshToken = async () => {
-    const response = await axios.post(`${API_ROOT}/v1/auth/refresh`, {}, {
-        withCredentials: true
-    });
-    setAccessToken(response.data.accessToken);
-    return response;
+    const { data } = await axios.post(`${API_ROOT}/v1/auth/refresh`, {}, { withCredentials:true });
+    setAccessToken(data.accessToken);
 };
 
 export const logout = async () => {
-    await axios.post(`${API_ROOT}/v1/auth/logout`, {}, {
-        withCredentials: true
-    });
+    await axios.post(`${API_ROOT}/v1/auth/logout`, {}, { withCredentials:true });
     clearAccessToken();
 };

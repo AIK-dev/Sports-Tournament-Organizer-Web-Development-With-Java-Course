@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from 'react-router';
-import { getAccessToken } from '../api/authApi';
+import { getAccessToken }   from '../api/authApi';
 
 export default function ProtectedRoute() {
     return getAccessToken()

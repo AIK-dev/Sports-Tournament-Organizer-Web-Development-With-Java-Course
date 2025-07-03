@@ -1,0 +1,51 @@
+/* -------- цветове / фон ---------- */
+:root{
+    --bg-body:#1a202c;
+    --bg-surface:#2d3748;
+    --bg-surface-light:#fafafa;
+    --c-text:#edf2f7;
+    --c-text-sub:#a0aec0;
+    --c-brand:#4c51bf;
+    --c-brand-dark:#6366f1;
+    --c-border:#4a5568;
+    --c-danger:#e53935;
+}
+
+/* -------- общ wrapper на страници ---------- */
+.pageWrap{
+    min-height:100vh;background:var(--bg-body);color:var(--c-text);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    display:flex;flex-direction:column;
+}
+
+/* -------- sticky tool-bar / header ---------- */
+.pageToolbar{
+    position:sticky;top:0;left:0;z-index:40;
+    background:var(--bg-surface);padding:.75rem 1rem;
+    display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;
+    border-bottom:1px solid var(--c-border);
+}
+.pageToolbar input,
+.pageToolbar select{
+    padding:6px 8px;border:1px solid var(--c-border);border-radius:4px;
+    background:#fff;color:#000;font-size:.875rem;
+}
+
+/* -------- бутони ---------- */
+.primaryBtn, .actionBtn, .dangerBtn{
+    border:0;border-radius:4px;font-weight:600;cursor:pointer;
+    padding:.45rem 1rem;font-size:.875rem;transition:.15s;
+}
+.primaryBtn{background:var(--c-brand);color:#fff;}
+.primaryBtn:hover{background:var(--c-brand-dark);}
+.actionBtn{background:var(--bg-surface-light);color:#000;}
+.actionBtn:hover{background:#e2e8f0;}
+.dangerBtn{background:var(--c-danger);color:#fff;}
+.dangerBtn:hover{background:#c62828;}
+
+/* -------- таблични изгледи ---------- */
+.dataTable{width:100%;border-collapse:collapse;}
+.dataTable th,
+.dataTable td{padding:.6rem 1rem;border-bottom:1px solid var(--c-border);}
+.dataTable th{background:var(--bg-surface);text-align:left;font-weight:600;}
+.dataTable tr:nth-child(even){background:#2b3343;}

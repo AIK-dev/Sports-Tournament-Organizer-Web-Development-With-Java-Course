@@ -32,6 +32,7 @@ public class PlayerMapper {
         playerOutDTO.setId(p.getId());
         copyDtoPrimitives(p, playerOutDTO);
         playerOutDTO.setAssociatedTeam(p.getTeam() != null ? p.getTeam().getName() : "SINGLE PLAYER");
+        playerOutDTO.setUserId(p.getUser() != null ? p.getUser().getId() : null);
         return playerOutDTO;
     }
     private void copyPrimitives(PlayerInDTO src, Player target) {

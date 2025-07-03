@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
-import { login } from '../api/authApi';
+import {getAccessToken, login} from '../api/authApi';
 import '../Auth.css';
+import {jwtDecode} from "jwt-decode";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function Login() {
         try {
             await login(data.username, data.password);
             navigate('/');
+            const raw = getAccessToken();          // взимаме го от authApi
+            console.log('TOKEN PAYLOAD:', jwtDecode(raw));
         } catch {
             setError('Invalid username or password.');
         }
