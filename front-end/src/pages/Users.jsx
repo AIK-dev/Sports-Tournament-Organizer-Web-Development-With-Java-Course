@@ -11,20 +11,16 @@ import {
 import { fetchPlayers } from '../api/playersApi';
 import { getAccessToken, logout, isAdmin } from '../api/authApi';
 
-import '../pages/Users.css';          // (тъмният стил е по-долу)
-
+import '../pages/Users.css';
 export default function Users() {
-    /* ---------- routing / auth ---------- */
     const nav   = useNavigate();
     const token = getAccessToken();
 
-    /* ---------- data ---------- */
     const [users,   setUsers]   = useState([]);
     const [players, setPlayers] = useState([]);
     const [search,  setSearch]  = useState('');
     const [err,     setErr]     = useState(null);
 
-    /* ---------- initial load ---------- */
     useEffect(() => {
         Promise.all([
             fetchUsers().then(r => setUsers(r.data)),
@@ -32,13 +28,11 @@ export default function Users() {
         ]).catch(e => setErr(e.message));
     }, []);
 
-    /* ---------- helper ---------- */
     const refreshUser = async id => {
         const { data } = await fetchUser(id);
         setUsers(u => u.map(x => (x.id === id ? data : x)));
     };
 
-    /* ---------- filtered list ---------- */
     const view = useMemo(
         () =>
             users.filter(u =>
@@ -49,13 +43,10 @@ export default function Users() {
         [users, search]
     );
 
-    /* ---------- early states ---------- */
     if (err) return <p className="pad err">Error: {err}</p>;
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* ---------- Top-bar ---------- */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -122,7 +113,6 @@ export default function Users() {
     );
 }
 
-/* ---------- single row ---------- */
 function UserRow({ user, allPlayers, onRoleChanged, onPlayerAttached }) {
     const [editRole,   setEditRole]   = useState(false);
     const [newRole,    setNewRole]    = useState(user.role);

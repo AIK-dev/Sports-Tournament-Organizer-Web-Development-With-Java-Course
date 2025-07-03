@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { register as apiRegister } from '../api/authApi';
-import '../Auth.css';                               // вече стиловете са тук
+import '../Auth.css';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function Register() {
     const onSubmit = async data => {
         try {
             await apiRegister(data);
-            navigate('/login');                          // към login след успех
+            navigate('/login');
         } catch {
             setError('Registration failed. Please try again.');
         }
@@ -33,7 +33,6 @@ export default function Register() {
                     <h1>Register</h1>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        {/* ---------------- EMAIL ---------------- */}
                         <div>
                             <label>Email: </label>
                             <input
@@ -51,7 +50,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* -------------- USERNAME --------------- */}
                         <div>
                             <label>Username: </label>
                             <input
@@ -67,7 +65,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* -------------- PASSWORD --------------- */}
                         <div>
                             <label>Password: </label>
                             <input

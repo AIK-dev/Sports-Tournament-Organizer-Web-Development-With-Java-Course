@@ -19,7 +19,7 @@ export default function Login() {
         try {
             await login(data.username, data.password);
             navigate('/');
-            const raw = getAccessToken();          // взимаме го от authApi
+            const raw = getAccessToken();
             console.log('TOKEN PAYLOAD:', jwtDecode(raw));
         } catch {
             setError('Invalid username or password.');

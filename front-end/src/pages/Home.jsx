@@ -1,4 +1,3 @@
-/*  src/pages/Home.jsx  */
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate }  from 'react-router';
 
@@ -11,7 +10,6 @@ import { getAccessToken, logout } from '../api/authApi';
 
 import './Home.css';
 
-/* статичният списък със спортове */
 const SPORTS = [
     'basketball','baseball','volleyball','football','tennis','table_tennis',
     'handball','golf','ice_hockey','wrestling','archery','cycling','swimming',
@@ -32,11 +30,9 @@ export default function Home() {
     const [err,  setErr ] = useState(null);
     const [load, setLoad] = useState(true);
 
-    /* ---------- router / auth ---------- */
     const nav   = useNavigate();
     const token = getAccessToken();
 
-    /* ---------- fetch on mount ---------- */
     useEffect(() => {
         Promise.all([fetchTournaments(), fetchMatches()])
             .then(([tRes, mRes]) => {
@@ -47,7 +43,6 @@ export default function Home() {
             .finally(() => setLoad(false));
     }, []);
 
-    /* ---------- derived ---------- */
     const visibleTournaments = useMemo(
         () => tournaments.filter(t => t.sport?.toLowerCase() === selSport),
         [tournaments, selSport]
@@ -63,14 +58,11 @@ export default function Home() {
         ? tournaments.find(t => t.id === matchObj.tournamentId)
         : null;
 
-    /* ---------- early returns ---------- */
     if (load) return <p className="pad">Loading…</p>;
     if (err)  return <p className="pad err">Error: {err}</p>;
 
-    /* ---------- JSX ---------- */
     return (
         <>
-            {/* Top-bar със static позиция */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -97,7 +89,6 @@ export default function Home() {
             </header>
 
             <div className="home-page-layout">
-                {/* хоризонтален списък със спортове */}
                 <header className="sports-bar">
                     {SPORTS.map(name => (
                         <button

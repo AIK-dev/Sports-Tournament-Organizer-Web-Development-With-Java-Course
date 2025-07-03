@@ -6,24 +6,20 @@ import { addToTeam }   from '../api/playersApi';
 import { getAccessToken, logout } from '../api/authApi';
 
 export default function AssignTeam() {
-    /* ---------- routing ---------- */
-    const { id } = useParams();           // player id
+    const { id } = useParams();
     const nav    = useNavigate();
     const token  = getAccessToken();
 
-    /* ---------- data ---------- */
     const [teams, setTeams] = useState([]);
     const [q,     setQ]     = useState('');
     const [err,   setErr]   = useState(null);
 
-    /* ---------- fetch ---------- */
     useEffect(() => {
         fetchTeams()
             .then(r => setTeams(r.data))
             .catch(e => setErr(e.message));
     }, []);
 
-    /* ---------- filtered view ---------- */
     const view = useMemo(() => {
         return teams.filter(t =>
             t.name.toLowerCase().includes(q.toLowerCase())
@@ -32,10 +28,8 @@ export default function AssignTeam() {
 
     if (err) return <p className="pad err">Error: {err}</p>;
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* ---------- Top-bar ---------- */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -74,7 +68,6 @@ export default function AssignTeam() {
                                 onChange={e => setQ(e.target.value)}
                             />
 
-                            {/* List */}
                             {view.length ? (
                                 <ul className="teamSelectList">
                                     {view.map(t => (

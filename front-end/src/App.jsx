@@ -20,8 +20,8 @@ import Users              from './pages/Users';
 
 import NotFound           from './pages/NotFound';
 
-import ProtectedRoute     from './layouts/ProtectedRoutes';   // само проверява токена
-import RequireAdmin       from './components/RequireAdmin';   // за ADMIN / ORG-owner
+import ProtectedRoute     from './layouts/ProtectedRoutes';
+import RequireAdmin       from './components/RequireAdmin';
 
 import { getAccessToken } from './api/authApi';
 import TeamForm from "./pages/TeamForm.jsx";
@@ -29,7 +29,6 @@ import TeamForm from "./pages/TeamForm.jsx";
 const redirectIfAuth = () => { if (getAccessToken()) throw redirect('/'); };
 
 const router = createBrowserRouter([
-    /* ───── Публични страници ───── */
     { path: '/',          element: <Home /> },                      // landing
     { path: '/login',     element: <Login />,    loader: redirectIfAuth },
     { path: '/register',  element: <Register />, loader: redirectIfAuth },
@@ -57,7 +56,6 @@ const router = createBrowserRouter([
         ],
     },
 
-    /* ───── 404 ───── */
     { path: '*', element: <NotFound /> },
 ]);
 

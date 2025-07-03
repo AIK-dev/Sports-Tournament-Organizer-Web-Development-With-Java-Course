@@ -15,7 +15,6 @@ const SPORTS = [
 ];
 
 export default function Players() {
-    /* ---------- data ---------- */
     const nav = useNavigate();
     const token = getAccessToken();
 
@@ -24,7 +23,6 @@ export default function Players() {
     const [err, setErr] = useState(null);
     const [selSport, setSelSport] = useState(SPORTS[0]);
 
-    /* ---------- filters ---------- */
     const [search, setSearch] = useState('');
     const [level, setLevel] = useState('all');
     const [gender, setGender] = useState('all');
@@ -32,7 +30,6 @@ export default function Players() {
     const [ageTo, setAgeTo] = useState('');
     const [sortBy, setSortBy] = useState('firstName');
 
-    /* ---------- fetch ---------- */
     useEffect(() => {
         fetchPlayers()
             .then(r => setPlayers(r.data))
@@ -40,7 +37,6 @@ export default function Players() {
             .finally(() => setLoading(false));
     }, []);
 
-    /* ---------- helper lists ---------- */
     const sports = useMemo(
         () => Array.from(new Set(players.map(p => p.sport))).sort(),
         [players]
@@ -50,11 +46,9 @@ export default function Players() {
         [players]
     );
 
-    /* ---------- filtered view ---------- */
     const view = useMemo(() => {
         let out = [...players];
 
-        /* search + filters */
         const q = search.toLowerCase();
         if (q)
             out = out.filter(p =>
@@ -68,7 +62,6 @@ export default function Players() {
         if (ageFrom) out = out.filter(p => p.age >= +ageFrom);
         if (ageTo) out = out.filter(p => p.age <= +ageTo);
 
-        /* sorting */
         out.sort((a, b) => {
             if (sortBy === 'age') return a.age - b.age;
             if (sortBy === 'sport') return a.sport.localeCompare(b.sport);
@@ -78,14 +71,11 @@ export default function Players() {
         return out;
     }, [players, search, selSport, level, gender, ageFrom, ageTo, sortBy]);
 
-    /* ---------- early states ---------- */
     if (loading) return <p className="pad">Loading…</p>;
     if (err) return <p className="pad err">Error: {err}</p>;
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* Top-bar със static позиция - същият като в Home */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -110,7 +100,6 @@ export default function Players() {
             </header>
 
             <div className="home-page-layout">
-                {/* хоризонтален списък със спортове - същият като в Home */}
                 <header className="sports-bar">
                     <button
                         key="all"
@@ -130,11 +119,9 @@ export default function Players() {
                     ))}
                 </header>
 
-                {/* съдържание */}
                 <main className="main-content-area">
                     <div className="content-grid">
                         <section className="center-column">
-                            {/* toolbar / филтри */}
                             <div className="players-toolbar">
                                 <input
                                     className="players-search"
@@ -200,7 +187,6 @@ export default function Players() {
                                 )}
                             </div>
 
-                            {/* grid */}
                             {view.length ? (
                                 <div className="players-grid">
                                     {view.map(p => (

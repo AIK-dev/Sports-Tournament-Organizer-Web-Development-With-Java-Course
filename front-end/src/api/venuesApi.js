@@ -1,4 +1,3 @@
-/* src/api/venuesApi.js */
 import api from './axios';
 
 export const fetchVenues      = ()      => api.get('/v1/venues');

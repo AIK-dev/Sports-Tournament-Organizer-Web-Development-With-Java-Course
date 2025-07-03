@@ -1,7 +1,6 @@
-/* src/api/matchesApi.js */
 import api from './axios';
 
-export const fetchMatches      = ()      => api.get('/v1/matches');          // all
+export const fetchMatches      = ()      => api.get('/v1/matches');
 export const fetchMatch        = id      => api.get(`/v1/matches/${id}`);
 export const createMatch       = body    => api.post('/v1/matches', body);
 export const updateMatch       = (id, b) => api.put(`/v1/matches/${id}`, b);

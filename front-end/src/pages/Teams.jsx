@@ -14,7 +14,6 @@ const SPORTS = [
 ];
 
 export default function Teams() {
-    /* ---------- data ---------- */
     const nav   = useNavigate();
     const token = getAccessToken();
 
@@ -23,13 +22,11 @@ export default function Teams() {
     const [err,     setErr]     = useState(null);
     const [selSport, setSelSport] = useState('all');
 
-    /* ---------- filters ---------- */
     const [search,    setSearch]    = useState('');
     const [ageGroup,  setAgeGroup]  = useState('all');
     const [teamType,  setTeamType]  = useState('all');
     const [sortBy,    setSortBy]    = useState('name');
 
-    /* ---------- fetch ---------- */
     useEffect(() => {
         fetchTeams()
             .then(r => setTeams(r.data))
@@ -37,7 +34,6 @@ export default function Teams() {
             .finally(() => setLoading(false));
     }, []);
 
-    /* ---------- helper lists ---------- */
     const ageGroups = useMemo(
         () => Array.from(new Set(teams.map(t => t.ageGroup))).sort(),
         [teams]
@@ -47,7 +43,6 @@ export default function Teams() {
         [teams]
     );
 
-    /* ---------- filtered view ---------- */
     const view = useMemo(() => {
         let out = [...teams];
 
@@ -59,7 +54,6 @@ export default function Teams() {
         if (ageGroup !== 'all') out = out.filter(t => t.ageGroup === ageGroup);
         if (teamType !== 'all') out = out.filter(t => t.type === teamType);
 
-        /* sorting */
         out.sort((a, b) => {
             if (sortBy === 'sport') return a.sport.localeCompare(b.sport);
             if (sortBy === 'ageGroup') return a.ageGroup.localeCompare(b.ageGroup);
@@ -69,14 +63,11 @@ export default function Teams() {
         return out;
     }, [teams, search, selSport, ageGroup, teamType, sortBy]);
 
-    /* ---------- early states ---------- */
     if (loading) return <p className="pad">Loading…</p>;
     if (err)     return <p className="pad err">Error: {err}</p>;
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* Top-bar (reuse) */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -101,7 +92,6 @@ export default function Teams() {
             </header>
 
             <div className="home-page-layout">
-                {/* Sports bar */}
                 <header className="sports-bar">
                     <button
                         key="all"
@@ -121,7 +111,6 @@ export default function Teams() {
                     ))}
                 </header>
 
-                {/* Content */}
                 <main className="main-content-area">
                     <div className="content-grid">
                         <section className="center-column">
@@ -173,7 +162,6 @@ export default function Teams() {
                                 )}
                             </div>
 
-                            {/* grid */}
                             {view.length ? (
                                 <div className="teams-grid">
                                     {view.map(t => (

@@ -1,12 +1,11 @@
-/* src/api/authApi.js */
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 const API_ROOT = 'http://localhost:8080/api';
 
 let accessToken   = null;
-let currentUser   = null;            // { userId, username }
-let currentRoles  = [];              // ['ADMIN', 'PARTICIPANT', …]
+let currentUser   = null;
+let currentRoles  = [];
 
 export const setAccessToken = token => {
     accessToken = token;
@@ -31,7 +30,6 @@ export const hasRole        = role => currentRoles.includes(role);
 
 export const getUID = () => currentUser?.userId;
 
-/* ---------- auth endpoints ---------- */
 export const login = async (username, password) => {
     const { data } = await axios.post(`${API_ROOT}/v1/auth/login`, { username, password }, { withCredentials:true });
     setAccessToken(data.accessToken);

@@ -18,19 +18,16 @@ import {
 } from '../api/authApi';
 
 export default function TeamDetail() {
-    /* ---------- routing ---------- */
     const { id } = useParams();
     const nav    = useNavigate();
     const token  = getAccessToken();
 
-    /* ---------- data ---------- */
     const [team,     setTeam]     = useState(null);
     const [users,    setUsers]    = useState([]);
     const [newOwner, setNewOwner] = useState('');
     const [loading,  setLoading]  = useState(true);
     const [err,      setErr]      = useState(null);
 
-    /* ---------- fetch ---------- */
     useEffect(() => {
         Promise.all([
             fetchTeam(id).then(r => setTeam(r.data)),
@@ -43,12 +40,10 @@ export default function TeamDetail() {
             .finally(() => setLoading(false));
     }, [id]);
 
-    /* ---------- early states ---------- */
     if (loading) return <p className="pad">Loading…</p>;
     if (err)     return <p className="pad err">Error: {err}</p>;
     if (!team)   return <p className="pad">No data.</p>;
 
-    /* ---------- auth helpers ---------- */
     const me       = getCurrentUser();
     const myId     = me?.userId;
     const iAmOwner = team.ownerId === myId;
@@ -56,10 +51,8 @@ export default function TeamDetail() {
     const canEdit  = isAdmin() || (hasRole('ORGANIZER') && iAmOwner);
     const canAdmin = isAdmin();
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* ---------- Top-bar ---------- */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>Log&nbsp;in</button>
@@ -82,7 +75,6 @@ export default function TeamDetail() {
                                 <p>{team.sport} · {team.ageGroup} · {team.type}</p>
                                 <p><b>Owner:</b> {team.ownerUsername || '—'}</p>
 
-                                {/* ---------- Change owner ---------- */}
                                 {canAdmin && (
                                     <OwnerBox
                                         users={users}
@@ -95,7 +87,6 @@ export default function TeamDetail() {
                                     />
                                 )}
 
-                                {/* ---------- Players list ---------- */}
                                 <h4 style={{ marginTop: '1.25rem' }}>Players:</h4>
                                 {team.players?.length ? (
                                     <div className="players-grid" style={{ marginTop: '0.75rem' }}>
@@ -111,7 +102,6 @@ export default function TeamDetail() {
                                     <p>No players in this team yet.</p>
                                 )}
 
-                                {/* ---------- Edit / Delete ---------- */}
                                 {canEdit && (
                                     <div className="inline" style={{ marginTop: 24 }}>
                                         <button

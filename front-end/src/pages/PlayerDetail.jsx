@@ -17,24 +17,20 @@ import {
 } from '../api/authApi';
 
 export default function PlayerDetail() {
-    /* ---------- routing ---------- */
     const { id } = useParams();
     const nav    = useNavigate();
     const token  = getAccessToken();
 
-    /* ---------- data ---------- */
     const [player,   setPlayer]   = useState(null);
     const [users,    setUsers]    = useState([]);
     const [newOwner, setNew]      = useState('');
     const [err,      setErr]      = useState(null);
     const [loading,  setLoading]  = useState(true);
 
-    /* ---------- fetch ---------- */
     useEffect(() => {
         Promise.all([
             fetchPlayer(id).then(r => setPlayer(r.data)),
             isAdmin() && fetchUsers().then(r =>
-                // показвай само потребители с роля ORGANIZER
                 setUsers(r.data.filter(u => u.role === 'ORGANIZER'))
             ),
         ])
@@ -42,12 +38,10 @@ export default function PlayerDetail() {
             .finally(() => setLoading(false));
     }, [id]);
 
-    /* ---------- early states ---------- */
     if (loading) return <p className="pad">Loading…</p>;
     if (err)     return <p className="pad err">Error: {err}</p>;
     if (!player) return <p className="pad">No data.</p>;
 
-    /* ---------- who am I ---------- */
     const me       = getCurrentUser();
     const myId     = me?.userId;
 
@@ -67,10 +61,8 @@ export default function PlayerDetail() {
         player.teamId != null
         || (player.associatedTeam && player.associatedTeam !== 'SINGLE PLAYER');
 
-    /* ---------- UI ---------- */
     return (
         <>
-            {/* ---------- Top-bar (same as in <Players>) ---------- */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -95,7 +87,6 @@ export default function PlayerDetail() {
             </header>
 
             <div className="home-page-layout">
-                {/* ---------- Main content ---------- */}
                 <main className="main-content-area">
                     <div className="content-grid">
                         <section className="center-column">
@@ -106,9 +97,8 @@ export default function PlayerDetail() {
                                 <p><b>Gender:</b> {player.gender}</p>
                                 <p><b>Sport / Level:</b> {player.sport} • {player.level}</p>
                                 <p><b>Team:</b> {hasTeam ? player.associatedTeam : '—'}</p>
-                                <p><b>Owner:</b> {player.ownerUsername || '—'}</p>
+                                <p><b>Owner:</b> {player.ownerId || '—'}</p>
 
-                                {/* --- only ADMIN + organizer-owner --- */}
                                 {canAdmin && (
                                     <>
                                         <OwnerBox
@@ -171,7 +161,6 @@ export default function PlayerDetail() {
     );
 }
 
-/* ---------- helpers ---------- */
 function OwnerBox({ users, value, onChange, onSave }) {
     return (
         <div className="inline">

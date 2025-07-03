@@ -1,4 +1,3 @@
-/* src/api/tournamentsApi.js */
 import api from './axios';
 
 export const fetchTournaments      = ()      => api.get('/v1/tournaments');

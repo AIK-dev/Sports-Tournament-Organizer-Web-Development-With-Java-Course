@@ -11,7 +11,6 @@ import {
 import { getAccessToken, logout } from '../api/authApi';
 import '../forms.css';
 
-/* -- helper lists -------------------------------------------------- */
 const SPORTS = [
     'basketball','baseball','volleyball','football','tennis','table_tennis',
     'handball','golf','ice_hockey','wrestling','archery','cycling','swimming',
@@ -22,7 +21,6 @@ const SPORTS = [
 
 const AGE_GROUPS = ['U12','U14','U16','U18','U20','AMATEUR','PROFESSIONAL'];
 const TEAM_TYPES = ['MALE', 'FEMALE', 'MIXED'];
-/* ------------------------------------------------------------------ */
 
 export default function TeamForm({ mode }) {
     const isEdit = mode === 'edit';
@@ -36,14 +34,12 @@ export default function TeamForm({ mode }) {
         }
     });
 
-    /* fetch on edit */
     useEffect(() => {
         if (isEdit) {
             fetchTeam(id).then(r => reset(r.data));
         }
     }, [isEdit, id, reset]);
 
-    /* submit */
     const onSubmit = async data => {
         if (isEdit) await updateTeam(id, data);
         else        await createTeam(data);
@@ -51,10 +47,8 @@ export default function TeamForm({ mode }) {
         nav('/teams');
     };
 
-    /* UI */
     return (
         <>
-            {/* ---------- Top-bar ---------- */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>Log&nbsp;in</button>
