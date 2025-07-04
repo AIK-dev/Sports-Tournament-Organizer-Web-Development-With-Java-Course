@@ -64,7 +64,8 @@ public class TeamMapper {
                             player.getLevel(),
                             player.getSport(),
                             team.getName(),
-                            player.getUser() != null ? player.getUser().getId() : null
+                            player.getUser() != null ? player.getUser().getId() : null,
+                            player.getOwner() != null ? player.getOwner().getId() : null
                     )).collect(Collectors.toList());
         }
         return new TeamOutDTO(

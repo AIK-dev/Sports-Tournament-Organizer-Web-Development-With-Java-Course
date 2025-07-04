@@ -33,5 +33,5 @@ public class PlayerOutDTO {
 
     private String associatedTeam;
     private Integer userId;
-
+    private Integer ownerId;
 }

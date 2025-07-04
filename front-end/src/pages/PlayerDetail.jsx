@@ -1,13 +1,14 @@
-// src/pages/PlayerDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
+
 import {
     fetchPlayer,
     deletePlayer,
     changeOwner,
     removeFromTeam,
 } from '../api/playersApi';
-import { fetchUsers } from '../api/userApi';
+import { fetchUsers, fetchUser } from '../api/userApi';
+
 import {
     isAdmin,
     hasRole,
@@ -17,25 +18,38 @@ import {
 } from '../api/authApi';
 
 export default function PlayerDetail() {
-    const { id } = useParams();
-    const nav    = useNavigate();
-    const token  = getAccessToken();
+    const { id }  = useParams();
+    const nav     = useNavigate();
+    const token   = getAccessToken();
 
     const [player,   setPlayer]   = useState(null);
     const [users,    setUsers]    = useState([]);
+    const [owner,    setOwner]    = useState(null);
     const [newOwner, setNew]      = useState('');
     const [err,      setErr]      = useState(null);
     const [loading,  setLoading]  = useState(true);
 
     useEffect(() => {
-        Promise.all([
-            fetchPlayer(id).then(r => setPlayer(r.data)),
-            isAdmin() && fetchUsers().then(r =>
-                setUsers(r.data.filter(u => u.role === 'ORGANIZER'))
-            ),
-        ])
-            .catch(e => setErr(e.message))
-            .finally(() => setLoading(false));
+        (async () => {
+            try {
+                const { data: p } = await fetchPlayer(id);
+                setPlayer(p);
+
+                if (p.ownerId) {
+                    const { data: o } = await fetchUser(p.ownerId);
+                    setOwner(o);
+                }
+
+                if (isAdmin()) {
+                    const { data: all } = await fetchUsers();
+                    setUsers(all.filter(u => u.role === 'ORGANIZER'));
+                }
+            } catch (e) {
+                setErr(e.message);
+            } finally {
+                setLoading(false);
+            }
+        })();
     }, [id]);
 
     if (loading) return <p className="pad">Loading…</p>;
@@ -46,23 +60,23 @@ export default function PlayerDetail() {
     const myId     = me?.userId;
 
     const iAmOwner = player.ownerId === myId;
-    const iAmThis  = player.userId  === myId;   // participant–self
+    const iAmThis  = player.userId  === myId;
 
-    const canEdit  =
+    const canEdit =
         isAdmin()
         || (hasRole('ORGANIZER')   && iAmOwner)
         || (hasRole('PARTICIPANT') && iAmThis);
 
     const canAdmin =
         isAdmin()
-        || (hasRole('ORGANIZER') && iAmOwner);
 
-    const hasTeam  =
+    const hasTeam =
         player.teamId != null
         || (player.associatedTeam && player.associatedTeam !== 'SINGLE PLAYER');
 
     return (
         <>
+            {/* top-bar */}
             <header className="home-topbar">
                 {!token ? (
                     <button className="topBtn" onClick={() => nav('/login')}>
@@ -86,6 +100,7 @@ export default function PlayerDetail() {
                 )}
             </header>
 
+            {/* page */}
             <div className="home-page-layout">
                 <main className="main-content-area">
                     <div className="content-grid">
@@ -97,7 +112,12 @@ export default function PlayerDetail() {
                                 <p><b>Gender:</b> {player.gender}</p>
                                 <p><b>Sport / Level:</b> {player.sport} • {player.level}</p>
                                 <p><b>Team:</b> {hasTeam ? player.associatedTeam : '—'}</p>
-                                <p><b>Owner:</b> {player.ownerId || '—'}</p>
+                                <p>
+                                    <b>Owner:</b>{' '}
+                                    {owner
+                                        ? owner.username
+                                        : player.ownerId || '—'}    {}
+                                </p>
 
                                 {canAdmin && (
                                     <>
@@ -107,7 +127,7 @@ export default function PlayerDetail() {
                                             onChange={setNew}
                                             onSave={async () => {
                                                 await changeOwner(player.id, newOwner);
-                                                location.reload();
+                                                location.reload();          // бърз refresh
                                             }}
                                         />
 
@@ -115,7 +135,7 @@ export default function PlayerDetail() {
                                             <RemoveBtn onRemove={async () => {
                                                 await removeFromTeam(player.id);
                                                 location.reload();
-                                            }} />
+                                            }}/>
                                         ) : (
                                             <button
                                                 className="primaryBtn"
@@ -127,7 +147,6 @@ export default function PlayerDetail() {
                                     </>
                                 )}
 
-                                {/* --- Edit / Delete --- */}
                                 {canEdit && (
                                     <div className="inline" style={{ marginTop: 24 }}>
                                         <button
@@ -160,6 +179,7 @@ export default function PlayerDetail() {
         </>
     );
 }
+
 
 function OwnerBox({ users, value, onChange, onSave }) {
     return (
