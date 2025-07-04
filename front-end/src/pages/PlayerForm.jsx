@@ -51,9 +51,8 @@ export default function PlayerForm({ mode }) {
                     </button>
                 ) : (
                     <>
-                        <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
-                            Logout
-                        </button>
+                        <button className="topBtn" onClick={() => {nav('/');}}>Home</button>
+                        <button className="topBtn" onClick={() => {logout();nav('/');}}>Logout</button>
                         <button className="topBtn navBtn" onClick={() => nav('/players')}>
                             Players
                         </button>
@@ -68,7 +67,7 @@ export default function PlayerForm({ mode }) {
             </header>
 
             <div className="home-page-layout">
-                <main className="main-content-area">
+            <main className="main-content-area">
                     <div className="content-grid">
                         <section className="center-column">
                             <form className="playerForm" onSubmit={handleSubmit(onSubmit)}>

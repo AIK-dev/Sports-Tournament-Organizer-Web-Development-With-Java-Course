@@ -75,7 +75,10 @@ export default function Teams() {
                     </button>
                 ) : (
                     <>
-                        <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
+                    <button className="topBtn" onClick={() => { nav('/'); }}>
+                        Home
+                    </button>
+                    <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
                             Logout
                         </button>
                         <button className="topBtn navBtn" onClick={() => nav('/players')}>

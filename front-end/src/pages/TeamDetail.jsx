@@ -58,7 +58,9 @@ export default function TeamDetail() {
                     <button className="topBtn" onClick={() => nav('/login')}>Log&nbsp;in</button>
                 ) : (
                     <>
-                        <button className="topBtn" onClick={() => { logout(); nav('/'); }}>Logout</button>
+                        <button className="topBtn" onClick={() => {nav('/');}}>Home</button>
+                        <button className="topBtn" onClick={() => {logout();nav('/');}}>Logout
+                        </button>
                         <button className="topBtn navBtn" onClick={() => nav('/players')}>Players</button>
                         <button className="topBtn navBtn" onClick={() => nav('/teams')}>Teams</button>
                         <button className="topBtn navBtn" onClick={() => nav('/users')}>Users</button>

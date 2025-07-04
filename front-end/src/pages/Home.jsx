@@ -4,6 +4,9 @@ import { fetchTournamentMatches } from '../api/matchesApi';
 import TournamentList from '../components/TournamentList';
 import MatchDetails from '../components/MatchDetails';
 import { getTodayDate } from '../utils/dateUtils';
+import { getAccessToken, logout } from '../api/authApi';
+import { useNavigate }  from 'react-router';
+
 import './Home.css';
 
 export default function Home() {
@@ -14,10 +17,16 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [selectedMatchId, setSelectedMatchId] = useState(null);
     const [selectedMatchData, setSelectedMatchData] = useState(null);
+    const nav   = useNavigate();
+    const token = getAccessToken();
 
-    const sports = useMemo(() => [
-        'all', 'football', 'basketball', 'volleyball', 'tennis', 'hockey', 'esports'
-    ], []);
+    const SPORTS = ['all',
+        'basketball','baseball','volleyball','football','tennis','table_tennis',
+        'handball','golf','ice_hockey','wrestling','archery','cycling','swimming',
+        'skiing','running','marathon','pole_vault','weightlifting','powerlifting',
+        'surfing','chess','lacrosse','squash','rugby','american_football',
+        'boxing','biathlon',
+    ];
 
     const todayDate = getTodayDate();
 
@@ -114,23 +123,47 @@ export default function Home() {
     }
 
     return (
+
         <div className="home-page-layout">
-            <header className="home-topbar">
-            </header>
+                <header className="home-topbar">
+                    {!token ? (
+                        <button className="topBtn" onClick={() => nav('/login')}>
+                            Log&nbsp;in
+                        </button>
+                    ) : (
+                        <>
+                            <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
+                                Logout
+                            </button>
+
+                            <button className="topBtn navBtn" onClick={() => nav('/players')}>
+                                Players
+                            </button>
+                            <button className="topBtn navBtn" onClick={() => nav('/teams')}>
+                                Teams
+                            </button>
+                            <button className="topBtn navBtn" onClick={() => nav('/users')}>
+                                Users
+                            </button>
+                        </>
+                    )}
+                </header>
 
             <div className="sports-bar">
-                {sports.map(sportName => (
-                    <button
-                        key={sportName}
-                        onClick={() => {
-                            setSelectedSport(sportName);
-                            setSelectedMatchId(null);
-                        }}
-                        className={sportName === selectedSport ? 'sport-btn active' : 'sport-btn'}
-                    >
-                        {sportName.replace('_', ' ').toUpperCase()}
-                    </button>
-                ))}
+                <header className="sports-bar">
+                    {SPORTS.map(name => (
+                        <button
+                            key={name}
+                            onClick={() => {
+                                setSelectedSport(name);
+                                setSelectedMatchData(null);
+                            }}
+                            className={name === selectedSport ? 'sport-btn active' : 'sport-btn'}
+                        >
+                            {name.replace('_', ' ').toUpperCase()}
+                        </button>
+                    ))}
+                </header>
             </div>
 
             <div className="content-grid">

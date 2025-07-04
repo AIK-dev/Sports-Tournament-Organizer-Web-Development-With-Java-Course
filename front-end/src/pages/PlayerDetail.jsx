@@ -84,9 +84,8 @@ export default function PlayerDetail() {
                     </button>
                 ) : (
                     <>
-                        <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
-                            Logout
-                        </button>
+                        <button className="topBtn" onClick={() => {nav('/');}}>Home</button>
+                        <button className="topBtn" onClick={() => {logout();nav('/');}}>Logout</button>
                         <button className="topBtn navBtn" onClick={() => nav('/players')}>
                             Players
                         </button>

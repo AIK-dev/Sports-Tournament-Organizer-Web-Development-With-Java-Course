@@ -121,6 +121,115 @@ main,
     color: var(--c-text-sub);
 }
 
-.sports-bar {
+.sports-bar{
+    display:flex;gap:.5rem;overflow-x:auto;
+    padding:.75rem 1rem;background:#2d3748;white-space:nowrap;
+}
+.sport-btn{
+    flex-shrink:0;border:0;border-radius:.375rem;
+    padding:.4rem .9rem;font-size:.75rem;font-weight:600;
+    background:#4a5568;color:#edf2f7;cursor:pointer;transition:.2s;
+}
+.players-toolbar {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #2d3748;
+    border-radius: 0.375rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
+.players-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #4a5568;
+    background: #1a202c;
+    color: #edf2f7;
+}
+
+.players-select, .players-input {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #4a5568;
+    background: #1a202c;
+    color: #edf2f7;
+}
+
+.players-input {
+    width: 100px;
+}
+
+.players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.player-card {
+    display: block;
+    background: #2d3748;
+    padding: 1rem 1.25rem;
+    border-radius: 0.375rem;
+    color: #edf2f7;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.player-card:hover {
+    background: #4a5568;
+    transform: translateY(-2px);
+}
+
+.player-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+}
+
+.player-card p {
+    margin: 0.25rem 0;
+    color: #cbd5e0;
+}
+
+.player-card small {
+    color: #a0aec0;
+}
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.team-card {
+    display: block;
+    background: #2d3748;
+    padding: 1rem 1.25rem;
+    border-radius: 0.375rem;
+    color: #edf2f7;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.team-card:hover {
+    background: #4a5568;
+    transform: translateY(-2px);
+}
+
+.team-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+}
+
+.team-card p {
+    margin: 0.25rem 0;
+    color: #cbd5e0;
+}
+
+.team-card small {
+    color: #a0aec0;
 }

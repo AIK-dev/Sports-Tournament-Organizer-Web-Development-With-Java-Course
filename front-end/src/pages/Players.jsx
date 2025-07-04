@@ -83,6 +83,9 @@ export default function Players() {
                     </button>
                 ) : (
                     <>
+                    <button className="topBtn" onClick={() => { nav('/'); }}>
+                        Home
+                        </button>
                         <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
                             Logout
                         </button>
