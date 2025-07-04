@@ -1,5 +1,6 @@
+/* src/components/MatchDetails.css */
 .match-details-card {
-    background-color: #2d3748;
+    background-color: var(--bg-surface);
     border-radius: 0.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     padding: 1.5rem;
@@ -7,10 +8,11 @@
     flex-direction: column;
     gap: 1.5rem;
     height: 100%;
+    color: var(--c-text);
 }
 
 .match-details-placeholder {
-    background-color: #2d3748;
+    background-color: var(--bg-surface);
     border-radius: 0.5rem;
     padding: 1.5rem;
     height: 100%;
@@ -20,12 +22,12 @@
 }
 
 .match-details-placeholder p {
-    color: #9ca3af;
+    color: var(--c-text-sub);
 }
 
 .match-details-header p {
     font-size: 0.875rem;
-    color: #818cf8;
+    color: var(--c-brand);
     font-weight: 600;
 }
 
@@ -33,6 +35,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin-top: 0.25rem;
+    color: var(--c-text);
 }
 
 .competitor-display {
@@ -47,10 +50,11 @@
 .competitor-display .name {
     font-size: 1.25rem;
     font-weight: 600;
+    color: var(--c-text);
 }
 
 .competitor-display .vs {
-    color: #a0aec0;
+    color: var(--c-text-sub);
     font-weight: 700;
 }
 
@@ -67,16 +71,17 @@
 }
 
 .match-meta-row .label {
-    color: #a0aec0;
+    color: var(--c-text-sub);
 }
 
 .match-meta-row .value {
     font-weight: 600;
+    color: var(--c-text);
 }
 
 .match-meta-row .status-value {
-    background-color: rgba(30, 58, 138, 0.5);
-    color: #93c5fd;
+    background-color: rgba(76, 81, 191, 0.2);
+    color: var(--c-text);
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
 }

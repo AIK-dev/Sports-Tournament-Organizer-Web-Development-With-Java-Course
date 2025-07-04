@@ -46,7 +46,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/tournaments/**",
-                                "/api/v1/matches/**"
+                                "/api/v1/matches/**",
+                                "/api/v1/participations/**",
+                                "/api/v1/teams/**",
+                                "/api/v1/players/**",
+                                "/api/v1/venues/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/swagger-ui/**",

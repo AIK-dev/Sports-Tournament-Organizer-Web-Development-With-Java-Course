@@ -2,6 +2,8 @@ package com.tournament_organizer.controller;
 
 import com.tournament_organizer.dto.match.MatchInDTO;
 import com.tournament_organizer.dto.match.MatchOutDTO;
+import com.tournament_organizer.dto.player.PlayerOutDTO;
+import com.tournament_organizer.entity.Tournament;
 import com.tournament_organizer.service.MatchService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +51,10 @@ public class MatchController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         matchService.deleteById(id);
+    }
+
+    @GetMapping("/tournaments/{tournamentID}")
+    public ResponseEntity<List<MatchOutDTO>> tournamentSchedule(@PathVariable Long tournamentID) {
+        return ResponseEntity.ok(matchService.tournamentSchedule(tournamentID));
     }
 }

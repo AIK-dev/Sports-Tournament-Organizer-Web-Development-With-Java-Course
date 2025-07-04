@@ -1,125 +1,160 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate }  from 'react-router';
-
+import React, { useState, useEffect, useMemo } from 'react';
+import {fetchTournament, fetchTournaments} from '../api/tournamentsApi';
+import { fetchTournamentMatches } from '../api/matchesApi';
 import TournamentList from '../components/TournamentList';
-import MatchDetails   from '../components/MatchDetails';
-
-import { fetchMatches }     from '../api/matchesApi';
-import { fetchTournaments } from '../api/tournamentsApi';
-import { getAccessToken, logout } from '../api/authApi';
-
+import MatchDetails from '../components/MatchDetails';
+import { getTodayDate } from '../utils/dateUtils';
 import './Home.css';
 
-const SPORTS = [
-    'basketball','baseball','volleyball','football','tennis','table_tennis',
-    'handball','golf','ice_hockey','wrestling','archery','cycling','swimming',
-    'skiing','running','marathon','pole_vault','weightlifting','powerlifting',
-    'surfing','chess','lacrosse','squash','rugby','american_football',
-    'boxing','biathlon',
-];
-const TODAY = new Date().toISOString().slice(0,10);     // YYYY-MM-DD
-
 export default function Home() {
-    /* ---------- state ---------- */
-    const [tournaments, setTournaments] = useState([]);
-    const [matches,     setMatches]     = useState([]);
+    const [allTournaments, setAllTournaments] = useState([]);
+    const [matchesByTournament, setMatchesByTournament] = useState({});
+    const [selectedSport, setSelectedSport] = useState('all');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedMatchId, setSelectedMatchId] = useState(null);
+    const [selectedMatchData, setSelectedMatchData] = useState(null);
 
-    const [selSport, setSelSport] = useState(SPORTS[0]);
-    const [selMatch, setSelMatch] = useState(null);
+    const sports = useMemo(() => [
+        'all', 'football', 'basketball', 'volleyball', 'tennis', 'hockey', 'esports'
+    ], []);
 
-    const [err,  setErr ] = useState(null);
-    const [load, setLoad] = useState(true);
-
-    const nav   = useNavigate();
-    const token = getAccessToken();
+    const todayDate = getTodayDate();
 
     useEffect(() => {
-        Promise.all([fetchTournaments(), fetchMatches()])
-            .then(([tRes, mRes]) => {
-                setTournaments(tRes.data);
-                setMatches(mRes.data);
-            })
-            .catch(e => setErr(e.message))
-            .finally(() => setLoad(false));
-    }, []);
+        const loadTournaments = async () => {
+            try {
+                setLoading(true);
+                const tournamentsResponse = await fetchTournaments(selectedSport === 'all' ? null : selectedSport);
+                setAllTournaments(tournamentsResponse.data);
+                setError(null);
+            } catch (err) {
+                console.error("Failed to fetch tournaments:", err);
+                setError("Failed to load tournaments. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadTournaments();
+    }, [selectedSport]);
 
-    const visibleTournaments = useMemo(
-        () => tournaments.filter(t => t.sport?.toLowerCase() === selSport),
-        [tournaments, selSport]
-    );
+    useEffect(() => {
+        const loadMatchesForTournaments = async () => {
+            if (!allTournaments.length) {
+                setMatchesByTournament({});
+                return;
+            }
 
-    const todayMatches = useMemo(
-        () => matches.filter(m => m.matchDate.startsWith(TODAY)),
-        [matches]
-    );
+            const newMatchesByTournament = {};
+            const fetchPromises = allTournaments.map(async (tournament) => {
+                try {
+                    const matchesResponse = await fetchTournamentMatches(tournament.id);
+                    const todaysAndSportMatches = matchesResponse.data.filter(
+                        match => {
+                            const isToday = match.scheduledStart?.startsWith(todayDate);
+                            const isSelectedSport = selectedSport === 'all' || (tournament.sport && tournament.sport.toLowerCase() === selectedSport.toLowerCase());
 
-    const matchObj   = matches.find(m => m.id === selMatch) || null;
-    const matchTourn = matchObj
-        ? tournaments.find(t => t.id === matchObj.tournamentId)
-        : null;
+                            // START Debug Logs for Match Filtering
+                            console.group(`Match Filter Check: ${match.id} (Tournament: ${tournament.name})`);
+                            console.log(`Match Sport (from backend): '${match.sport}'`);
+                            console.log(`Selected Sport (frontend filter): '${selectedSport}'`);
+                            console.log(`Match ScheduledStart: '${match.scheduledStart}'`);
+                            console.log(`Today's Date (from getTodayDate): '${todayDate}'`);
+                            console.log(`Condition 1: isToday (${match.scheduledStart} startsWith ${todayDate}) = ${isToday}`);
+                            console.log(`Condition 2: isSelectedSport (${selectedSport} === 'all' || ('${match.sport}' && '${match.sport}'.toLowerCase() === '${selectedSport}'.toLowerCase())) = ${isSelectedSport}`);
+                            console.log(`Overall Result for match ${match.id}: ${isToday && isSelectedSport}`);
+                            console.groupEnd();
+                            // END Debug Logs for Match Filtering
 
-    if (load) return <p className="pad">Loading…</p>;
-    if (err)  return <p className="pad err">Error: {err}</p>;
+                            return isToday && isSelectedSport;
+                        }
+                    );
+                    newMatchesByTournament[tournament.id] = todaysAndSportMatches;
+                } catch (err) {
+                    console.warn(`Failed to fetch matches for tournament ${tournament.id}:`, err);
+                    newMatchesByTournament[tournament.id] = [];
+                }
+            });
+
+            await Promise.all(fetchPromises);
+            setMatchesByTournament(newMatchesByTournament);
+        };
+
+        loadMatchesForTournaments();
+    }, [allTournaments, todayDate, selectedSport, loading]);
+
+    useEffect(() => {
+        if (selectedMatchId) {
+            let foundMatch = null;
+            for (const tournamentId in matchesByTournament) {
+                foundMatch = matchesByTournament[tournamentId].find(m => m.id === selectedMatchId);
+                if (foundMatch) break;
+            }
+            setSelectedMatchData(foundMatch);
+        } else {
+            setSelectedMatchData(null);
+        }
+    }, [selectedMatchId, matchesByTournament]);
+
+    const tournamentsForList = useMemo(() => {
+        return allTournaments
+            .map(tournament => ({
+                ...tournament,
+                todaysMatches: matchesByTournament[tournament.id] || [],
+            }))
+            .filter(tournament => tournament.todaysMatches.length > 0);
+    }, [allTournaments, matchesByTournament]);
+
+    if (loading) {
+        return <div className="home-page-layout">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="home-page-layout err">{error}</div>;
+    }
 
     return (
-        <>
+        <div className="home-page-layout">
             <header className="home-topbar">
-                {!token ? (
-                    <button className="topBtn" onClick={() => nav('/login')}>
-                        Log&nbsp;in
-                    </button>
-                ) : (
-                    <>
-                        <button className="topBtn" onClick={() => { logout(); nav('/'); }}>
-                            Logout
-                        </button>
-
-                        {/* навигация към защитените раздели */}
-                        <button className="topBtn navBtn" onClick={() => nav('/players')}>
-                            Players
-                        </button>
-                        <button className="topBtn navBtn" onClick={() => nav('/teams')}>
-                            Teams
-                        </button>
-                        <button className="topBtn navBtn" onClick={() => nav('/users')}>
-                            Users
-                        </button>
-                    </>
-                )}
             </header>
 
-            <div className="home-page-layout">
-                <header className="sports-bar">
-                    {SPORTS.map(name => (
-                        <button
-                            key={name}
-                            onClick={() => { setSelSport(name); setSelMatch(null); }}
-                            className={name === selSport ? 'sport-btn active' : 'sport-btn'}
-                        >
-                            {name.replace('_',' ').toUpperCase()}
-                        </button>
-                    ))}
-                </header>
-
-                {/* съдържание */}
-                <main className="main-content-area">
-                    <div className="content-grid">
-                        <section className="center-column">
-                            <TournamentList
-                                tournaments={visibleTournaments}
-                                matches={todayMatches}
-                                today={TODAY}
-                                selectedMatchId={selMatch}
-                                onSelectMatch={setSelMatch}
-                            />
-                        </section>
-
-                        <aside className="right-column-sidebar">
-                            <MatchDetails match={matchObj} tournament={matchTourn}/>
-                        </aside>
-                    </div>
-                </main>
+            <div className="sports-bar">
+                {sports.map(sportName => (
+                    <button
+                        key={sportName}
+                        onClick={() => {
+                            setSelectedSport(sportName);
+                            setSelectedMatchId(null);
+                        }}
+                        className={sportName === selectedSport ? 'sport-btn active' : 'sport-btn'}
+                    >
+                        {sportName.replace('_', ' ').toUpperCase()}
+                    </button>
+                ))}
             </div>
-        </>
+
+            <div className="content-grid">
+                <main className="main-content-area center-column">
+                    {tournamentsForList.length ? (
+                        <TournamentList
+                            tournaments={tournamentsForList}
+                            selectedMatchId={selectedMatchId}
+                            onSelectMatch={setSelectedMatchId}
+                        />
+                    ) : (
+                        <div className="no-matches-message">
+                            <p>No matches scheduled for today in {selectedSport === 'all' ? 'any sport' : selectedSport.replace('_', ' ')}.</p>
+                        </div>
+                    )}
+                </main>
+
+                <aside className="match-details-sidebar right-column-sidebar">
+                    <MatchDetails
+                        match={selectedMatchData}
+                        allTournaments={allTournaments}
+                    />
+                </aside>
+            </div>
+        </div>
     );
 }

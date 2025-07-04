@@ -1,18 +1,19 @@
+/* src/components/SportsNav.css */
 .sports-nav-header {
-    background-color: #2d3748;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--c-border);
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 40;
 }
 
 .sports-nav-wrapper {
     display: flex;
     align-items: center;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
     overflow-x: auto;
     white-space: nowrap;
+    gap: 0.5rem;
 }
 
 .sports-nav-button {
@@ -25,30 +26,24 @@
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    margin-right: 0.5rem;
-}
-
-.sports-nav-button:last-child {
-    margin-right: 0;
 }
 
 .sports-nav-button.active {
-    background-color: #4c51bf;
+    background-color: var(--c-brand);
     color: #ffffff;
 }
 
 .sports-nav-button:not(.active) {
-    background-color: #4a5568;
-    color: #edf2f7;
+    background-color: var(--c-border);
+    color: var(--c-text);
 }
 
 .sports-nav-button:not(.active):hover {
-    background-color: #4a5568a6;
+    background-color: rgba(74, 85, 104, 0.8);
 }
 
 @media (min-width: 640px) {
     .sports-nav-button {
         font-size: 1rem;
-        margin-right: 1rem;
     }
 }
